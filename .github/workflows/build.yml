@@ -83,6 +83,7 @@ jobs:
           generate_release_notes: true
 
   pages:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: test
     runs-on: ubuntu-latest
     permissions:
