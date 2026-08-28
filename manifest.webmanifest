@@ -1,0 +1,15 @@
+{
+  "name": "القرآن الكريم",
+  "short_name": "القرآن",
+  "description": "مصحف بسيط لقراءة القرآن الكريم والبحث عن السور — يعمل بدون إنترنت",
+  "dir": "rtl",
+  "lang": "ar",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f1e7",
+  "theme_color": "#0b6b4a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

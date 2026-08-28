@@ -1,0 +1,43 @@
+plugins {
+    id "com.android.application"
+}
+
+// optional release signing — drop keystore.jks + keystore.properties here (see README)
+def keystoreFile = file("keystore.jks")
+def ksProps = new Properties()
+if (file("keystore.properties").exists()) {
+    new FileInputStream(file("keystore.properties")).withStream { ksProps.load(it) }
+}
+
+android {
+    namespace "com.dali951.quran"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.dali951.quran"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreFile.exists() && ksProps.size() > 0) {
+                storeFile keystoreFile
+                storePassword ksProps["storePassword"]
+                keyAlias ksProps["keyAlias"]
+                keyPassword ksProps["keyPassword"]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keystoreFile.exists() && ksProps.size() > 0) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}

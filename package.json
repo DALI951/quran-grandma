@@ -1,0 +1,14 @@
+{
+  "name": "quran-grandma",
+  "version": "1.0.0",
+  "description": "مصحف بسيط لقراءة القرآن الكريم والبحث عن السور — app for grandma",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/verify.js",
+    "build": "node scripts/build-data.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

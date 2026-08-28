@@ -1,0 +1,106 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  apk:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+
+      - name: Restore release keystore from secrets (optional)
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > android/app/keystore.jks
+            { printf 'storePassword=%s\n' "$KEYSTORE_PASS"
+              printf 'keyAlias=%s\n' "$KEYSTORE_ALIAS"
+              printf 'keyPassword=%s\n' "$KEYSTORE_KEY_PASS"; } > android/app/keystore.properties
+            echo "release signing configured"
+          else
+            echo "no keystore secrets -> APK will be debug-signed"
+          fi
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_KEY_PASS: ${{ secrets.KEYSTORE_KEY_PASS }}
+
+      - name: Bundle web app into android assets
+        run: |
+          mkdir -p android/app/src/main/assets/www
+          cp index.html quran-data.js amiri-quran.woff2 icon.svg manifest.webmanifest sw.js android/app/src/main/assets/www/
+
+      - name: Build APK
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - run: gradle -p android -q assembleRelease
+
+      - name: Stage APK
+        run: |
+          V=$(grep -o 'versionName "[^"]*"' android/app/build.gradle | head -1 | cut -d'"' -f2)
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/quran-grandma-v$V.apk"
+          ls -lh dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quran-grandma-apk
+          path: dist/*.apk
+
+      - name: Publish GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.apk
+          generate_release_notes: true
+
+  pages:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage the hosted web app
+        run: |
+          mkdir -p staging
+          cp index.html quran-data.js amiri-quran.woff2 icon.svg manifest.webmanifest sw.js staging/
+          touch staging/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: staging
+      - id: deploy
+        uses: actions/deploy-pages@v4

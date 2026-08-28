@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b6b4a">
+<meta name="description" content="مصحف بسيط لقراءة القرآن الكريم والبحث عن السور — يعمل بدون إنترنت">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>القرآن الكريم</title>
+<style>
+  @font-face{
+    font-family:"Amiri Quran";
+    src:url("amiri-quran.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  :root{
+    --bg:#f6f1e7;
+    --card:#fffdf8;
+    --ink:#2b2118;
+    --soft:#6d5f4e;
+    --acc:#0b6b4a;
+    --acc-soft:#e3efe9;
+    --acc-ink:#0a3a2a;
+    --line:#e3d9c6;
+    --hl:#fde9a0;
+    --qfs:30px;
+    --r:20px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  [hidden]{display:none !important}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI", "Noto Naskh Arabic", "Traditional Arabic", Tahoma, sans-serif;
+    font-size:20px; line-height:1.6;
+  }
+  button{font-family:inherit; cursor:pointer; touch-action:manipulation}
+  button:focus-visible, input:focus-visible, a:focus-visible{outline:3px solid var(--acc); outline-offset:2px}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+
+  .appbar{
+    position:sticky; top:0; z-index:20;
+    background:var(--card); border-bottom:2px solid var(--line);
+    padding:10px clamp(12px, 4vw, 24px) 12px;
+    box-shadow:0 2px 8px rgba(43,33,24,.06);
+  }
+  h1{
+    font-family:"Amiri Quran","Amiri","Noto Naskh Arabic",serif;
+    font-size:clamp(26px, 6vw, 34px); font-weight:400;
+    margin:2px 0 10px; color:var(--acc-ink); letter-spacing:.5px;
+  }
+
+  .sbox{
+    display:flex; align-items:center; gap:8px;
+    background:#f2ecdd; border:2px solid var(--line); border-radius:var(--r);
+    padding:2px 12px;
+  }
+  .sbox:focus-within{border-color:var(--acc); background:#fff}
+  .sbox .kbd{font-size:20px}
+  #q{
+    flex:1; border:0; background:transparent; outline:none;
+    font-size:21px; line-height:1.5; padding:10px 0; color:var(--ink); min-width:0;
+  }
+  #q::placeholder{color:#a99b84}
+  #qClear{
+    background:none; border:0; font-size:18px; color:var(--soft);
+    padding:6px 10px; border-radius:12px;
+  }
+  #qClear:hover{background:#e7dfcd}
+
+  #resultCount{color:var(--soft); font-size:15px; padding:8px 6px 0}
+
+  #quickRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .quick{
+    position:relative; padding:14px 22px; border:2px solid var(--acc);
+    background:var(--acc-soft); color:var(--acc-ink);
+    font-size:21px; border-radius:999px; font-family:"Amiri Quran",serif;
+  }
+  .quick:hover{background:#d3e8de}
+
+  .continue{
+    display:flex; align-items:center; gap:12px; width:100%;
+    margin-top:12px; padding:14px 16px;
+    background:var(--acc); color:#f3faf6; border:0; border-radius:var(--r);
+    font-size:20px; text-align:right;
+  }
+  .continue b{font-family:"Amiri Quran",serif; font-size:23px}
+  .continue .arr{margin-inline-start:auto; font-size:24px}
+
+  #surahList{list-style:none; margin:8px 0 0; padding:0 clamp(12px, 4vw, 24px) 90px; display:flex; flex-direction:column; gap:10px}
+  .srow{
+    display:flex; align-items:center; gap:14px; width:100%;
+    background:var(--card); border:2px solid var(--line); border-radius:var(--r);
+    padding:12px 16px; text-align:right; color:var(--ink);
+  }
+  .srow:hover{border-color:var(--acc)}
+  .snum{
+    flex:0 0 52px; height:52px; display:grid; place-items:center;
+    background:var(--acc); color:#f3faf6; border-radius:50%;
+    font-size:20px;
+  }
+  .sname{font-size:24px; font-family:"Amiri Quran",serif; font-weight:700}
+  .smeta{font-size:15px; color:var(--soft); margin-inline-start:auto}
+
+  #reader article{padding:18px clamp(14px, 5vw, 60px) 90px; max-width:900px; margin:0 auto}
+  .bsml{
+    font-family:"Amiri Quran",serif; font-size:calc(var(--qfs)*.85);
+    text-align:center; margin:8px 0 22px; color:var(--acc-ink);
+  }
+  .ayah{
+    font-family:"Amiri Quran",serif; font-size:var(--qfs); line-height:2.4;
+    text-align:justify;
+    margin:0 0 .55em; padding:2px 8px; border-radius:10px;
+  }
+  .ayah .txt{word-break:break-word}
+  .ayah .num{
+    font-size:calc(var(--qfs)*.62); color:var(--acc); opacity:.85;
+    margin-inline-start:.4em; white-space:nowrap;
+  }
+  .ayah.cur{background:var(--hl)}
+  .ayah.flash{animation:flash 1.2s ease-out}
+  @keyframes flash{
+    0%{background:var(--hl)}
+    100%{background:transparent}
+  }
+
+  .navEnd{display:flex; gap:10px; margin:26px 0 20px}
+  .navEnd button{
+    flex:1; padding:16px 10px; font-size:19px; border-radius:var(--r);
+    background:var(--acc-soft); color:var(--acc-ink); border:2px solid var(--acc);
+  }
+  .navEnd .toList{background:var(--acc); color:#f3faf6}
+
+  .readerHead{display:flex; align-items:center; gap:10px; padding:6px 0}
+  #backBtn{
+    background:var(--acc); color:#f3faf6; border:0; border-radius:var(--r);
+    font-size:18px; padding:12px 18px; white-space:nowrap;
+  }
+  #readerTitle{
+    font-family:"Amiri Quran",serif; font-size:clamp(24px,5vw,32px); font-weight:400;
+    margin:0; flex:1; text-align:center; color:var(--acc-ink);
+  }
+  #readerMeta{text-align:center; color:var(--soft); font-size:15px; margin:0 0 6px}
+  .fsize{display:flex; gap:6px}
+  .fsize button{
+    width:46px; height:46px; border-radius:12px; border:2px solid var(--line);
+    background:var(--card); font-size:20px; color:var(--ink); font-weight:700;
+  }
+  .fsize button:hover{border-color:var(--acc)}
+
+  #jumpBanner{
+    display:flex; align-items:center; gap:10px;
+    margin:10px auto 0; max-width:900px; padding:12px 16px;
+    background:var(--hl); border:2px solid #e3c45a; border-radius:var(--r); font-size:18px;
+  }
+  #jumpBanner button{
+    margin-inline-start:auto; border:0; background:var(--acc); color:#fff;
+    padding:10px 18px; border-radius:12px; font-size:17px;
+  }
+  #jumpBanner b{font-family:"Amiri Quran",serif; font-size:20px}
+
+  footer{color:var(--soft); font-size:14px; text-align:center; padding:8px 16px 16px}
+  footer a{color:var(--acc)}
+</style>
+</head>
+<body>
+
+<section id="home">
+  <header class="appbar">
+    <h1>القرآن الكريم</h1>
+    <label class="sbox">
+      <span class="kbd" aria-hidden="true">🔎</span>
+      <input id="q" type="text" inputmode="search" enterkeyhint="search"
+             placeholder="اكتبي اسم السورة…" autocomplete="off" spellcheck="false" aria-label="ابحثي عن سورة">
+      <button id="qClear" hidden aria-label="مسح البحث">✕</button>
+    </label>
+    <div id="resultCount" hidden></div>
+    <div id="quickRow"></div>
+    <button id="continueBtn" class="continue" hidden></button>
+  </header>
+
+  <ul id="surahList"></ul>
+  <footer>يقرأ مباشرة من الجهاز — بدون إنترنت</footer>
+</section>
+
+<section id="reader" hidden>
+  <header class="appbar">
+    <div class="readerHead">
+      <button id="backBtn" aria-label="العودة إلى قائمة السور">→ القائمة</button>
+      <h2 id="readerTitle"></h2>
+      <div class="fsize">
+        <button id="fsDown" aria-label="تصغير الخط">أ−</button>
+        <button id="fsUp" aria-label="تكبير الخط">أ+</button>
+      </div>
+    </div>
+    <p id="readerMeta"></p>
+  </header>
+
+  <div id="jumpBanner" hidden></div>
+  <article id="surahBody"></article>
+</section>
+
+<script src="quran-data.js"></script>
+<script>
+"use strict";
+(function () {
+  var D = window.QURAN_DATA;
+  var KEY = "quran-grandma:v1";
+  var $ = function (id) { return document.getElementById(id); };
+  var home = $("home"), reader = $("reader");
+  var q = $("q"), list = $("surahList"), quickRow = $("quickRow"), rc = $("resultCount");
+  var body = $("surahBody"), rTitle = $("readerTitle"), rMeta = $("readerMeta");
+  var cBtn = $("continueBtn"), jumpBanner = $("jumpBanner");
+  var SIZES = [24, 28, 32, 38, 46];
+  var state = { surah: 0, ayah: 0, size: 2 };
+  var tops = [], ayahNodes = [];
+
+  // ——— helpers ———
+  // must mirror scripts/build-data.mjs normalize()
+  function normalize(s) {
+    return (String(s || ""))
+      .replace(/[أإآٱ]/g, "ا")
+      .replace(/ى/g, "ي")
+      .replace(/ة/g, "ه")
+      .replace(/[٠-٩]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩".indexOf(d); })
+      .replace(/[\u0640\u064B-\u0652\u0653\u0654\u0670\u06D6-\u06ED]/g, "")
+      .replace(/سور[هة]\s*/gi, "")
+      .trim().toLowerCase();
+  }
+  function arNum(n) { return String(n).replace(/[0-9]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[+d]; }); }
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || "{}");
+      if (s) { state.surah = +s.surah || 0; state.ayah = +s.ayah || 0; state.size = +s.size || 2; }
+    } catch (e) { /* fresh start */ }
+    if (SIZES.indexOf(SIZES[state.size]) === -1) state.size = 2;
+  }
+  function saveProgress(surahN, ayahN) {
+    state.surah = surahN; state.ayah = ayahN;
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
+  }
+
+  // ——— home / surah list ———
+  var QUICK = [1, 36, 55, 56, 67, 18]; // الفاتحة، يس، الرحمن، الواقعة، الملك، الكهف
+  function renderQuick() {
+    quickRow.innerHTML = QUICK.map(function (n) {
+      var s = D[n - 1];
+      return '<button class="quick" data-n="' + n + '">' + esc(s.an) + "</button>";
+    }).join("");
+  }
+  function filterSurahs(rawQuery) {
+    var qq = normalize(rawQuery);
+    if (!qq) return null;
+    var digits = qq.match(/^(\d{1,3})$/);
+    var num = digits ? parseInt(digits[1], 10) : 0;
+    return D.filter(function (s) {
+      if (num && s.n === num) return true;
+      if (s.search.indexOf(qq) !== -1) return true;
+      if (s.an.toLowerCase().indexOf(qq) !== -1) return true;
+      if (s.en.indexOf(qq) !== -1) return true;
+      return false;
+    });
+  }
+  function renderList(filtered) {
+    var src = filtered || D;
+    var showing = src.length;
+    if (!filtered) {
+      rc.hidden = true;
+    } else {
+      rc.hidden = false;
+      rc.textContent = "وجدنا " + arNum(showing) + " من " + arNum(D.length) + " " + (showing === 1 ? "سورة" : "سور");
+    }
+    list.innerHTML = src.map(function (s) {
+      return '<li><button class="srow" data-n="' + s.n + '" aria-label="قراءة سورة ' + esc(s.an) + '">' +
+        '<span class="snum">' + arNum(s.n) + "</span>" +
+        '<span class="sname">' + esc(s.an) + "</span>" +
+        '<span class="smeta">' + arNum(s.count) + " آية</span>" +
+        "</button></li>";
+    }).join("");
+  }
+  function onSearch() {
+    var v = q.value;
+    $("qClear").hidden = !v;
+    renderList(filterSurahs(v));
+  }
+
+  // ——— continue banner (home) ———
+  function renderContinue() {
+    if (!state.surah) { cBtn.hidden = true; return; }
+    var s = D[state.surah - 1];
+    if (!s) { cBtn.hidden = true; return; }
+    cBtn.hidden = false;
+    cBtn.innerHTML = '📖 وصلتي إلى سورة <b>' + esc(s.an) + "</b>، آية " + arNum(state.ayah) +
+      ' <span class="arr" aria-hidden="true">←</span>';
+  }
+
+  // ——— reader ———
+  function buildSurah(n) {
+    var s = D[n - 1];
+    if (!s) return;
+    var resuming = state.surah === n; // saved spot belongs to THIS surah?
+    var savedAyah = state.ayah;
+    state.surah = n;
+    state.ayah = resuming ? Math.min(savedAyah || 1, s.count) : 1;
+    rTitle.textContent = s.an;
+    rMeta.textContent = "سورة " + s.an + " · " + arNum(s.count) + " آية";
+    var html = "";
+    if (s.bsl) html += '<p class="bsml">' + esc(D[0].v[0]) + "</p>";
+    for (var i = 0; i < s.v.length; i++) {
+      html += '<p class="ayah" data-i="' + i + '">' +
+        '<span class="txt">' + esc(s.v[i]) + '</span>' +
+        '<span class="num" aria-label="نهاية الآية ' + arNum(i + 1) + '">﴿' + arNum(i + 1) + "﴾</span>" +
+        "</p>";
+    }
+    var prev = n > 1, next = n < 114;
+    var nav = '<div class="navEnd">';
+    if (prev) nav += '<button class="prevS" data-n="' + (n - 1) + '">→ ' + esc(D[n - 2].an) + "</button>";
+    if (next) nav += '<button class="nextS" data-n="' + (n + 1) + '">← ' + esc(D[n].an) + "</button>";
+    nav += '<button class="toList">☰ قائمة السور</button></div>';
+    body.innerHTML = html + nav;
+
+    ayahNodes = body.querySelectorAll(".ayah");
+    tops = [];
+    for (i = 0; i < ayahNodes.length; i++) tops.push(ayahNodes[i].offsetTop);
+
+    jumpBanner.innerHTML = "";
+    if (state.surah === n && state.ayah > 1) {
+      jumpBanner.hidden = false;
+      jumpBanner.innerHTML = "هنا وصلتي: الآية <b>" + arNum(state.ayah) + "</b>" +
+        '<button id="jumpGo">واصلي من هنا</button>';
+    } else {
+      jumpBanner.hidden = true;
+    }
+  }
+  function currentAyahIndex() {
+    if (!tops.length) return 0;
+    var mark = window.scrollY + window.innerHeight * 0.30;
+    var lo = 0, hi = tops.length - 1, ans = 0;
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      if (tops[mid] <= mark) { ans = mid; lo = mid + 1; } else { hi = mid - 1; }
+    }
+    return ans;
+  }
+  var lastMark = -1, tick = 0;
+  function trackSave() {
+    tick++;
+    var warned = false;
+    var idx = currentAyahIndex();
+    if (idx === lastMark) return;
+    lastMark = idx;
+    for (var i = 0; i < ayahNodes.length; i++) {
+      if (idx === i) ayahNodes[i].classList.add("cur");
+      else ayahNodes[i].classList.remove("cur");
+    }
+    saveProgress(state.surah, idx + 1);
+  }
+  var scrolled = false;
+  function onScroll() {
+    if (!scrolled) { scrolled = true; jumpBanner.hidden = true; }
+    requestAnimationFrame(trackSave);
+  }
+  function openSurah(n, fromContinue) {
+    buildSurah(n);
+    home.hidden = true; reader.hidden = false;
+    window.scrollTo(0, 0);
+    if (fromContinue && state.ayah > 1) {
+      requestAnimationFrame(function () {
+        scrollToAyah(state.ayah);
+        lastMark = -1; trackSave();
+      });
+    } else {
+      lastMark = -1; trackSave();
+    }
+  }
+  function scrollToAyah(v) {
+    var i = Math.min(v - 1, tops.length - 1);
+    window.scrollTo(0, Math.max(0, tops[i] - 14));
+    if (ayahNodes[i]) {
+      ayahNodes[i].classList.add("flash");
+      setTimeout(function () { ayahNodes[i].classList.remove("flash"); }, 1300);
+    }
+  }
+  function toHome() {
+    saveProgress(state.surah, state.ayah || 1);
+    reader.hidden = true; home.hidden = false;
+    renderContinue();
+    window.scrollTo(0, 0);
+    q.focus && q.focus({ preventScroll: true });
+  }
+
+  // ——— font size ———
+  function setSize(i) {
+    state.size = Math.max(0, Math.min(SIZES.length - 1, i));
+    document.documentElement.style.setProperty("--qfs", SIZES[state.size] + "px");
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
+    setTimeout(function () {
+      tops = [];
+      for (var j = 0; j < ayahNodes.length; j++) tops.push(ayahNodes[j].offsetTop);
+    }, 60);
+  }
+
+  // ——— events ———
+  q.addEventListener("input", onSearch);
+  $("qClear").addEventListener("click", function () { q.value = ""; onSearch(); q.focus(); });
+  list.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-n]");
+    if (b) openSurah(+b.dataset.n, false);
+  });
+  quickRow.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-n]");
+    if (b) openSurah(+b.dataset.n, false);
+  });
+  cBtn.addEventListener("click", function () {
+    if (state.surah) openSurah(state.surah, true);
+  });
+  $("backBtn").addEventListener("click", toHome);
+  body.addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("prevS") || b.classList.contains("nextS")) openSurah(+b.dataset.n, false);
+    else if (b.classList.contains("toList")) toHome();
+  });
+  jumpBanner.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "jumpGo") {
+      jumpBanner.hidden = true;
+      scrollToAyah(state.ayah);
+    }
+  });
+  $("fsUp").addEventListener("click", function () { setSize(state.size + 1); });
+  $("fsDown").addEventListener("click", function () { setSize(state.size - 1); });
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", function () {
+    setTimeout(function () {
+      tops = [];
+      for (var j = 0; j < ayahNodes.length; j++) tops.push(ayahNodes[j].offsetTop);
+    }, 120);
+  });
+
+  // ——— boot ———
+  load();
+  setSize(state.size);
+  renderQuick();
+  renderList(null);
+  renderContinue();
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register("sw.js").catch(function () { /* offline file use */ });
+  }
+
+  // exposed for the test harness / debugging / the Android back button
+  window.App = {
+    data: D,
+    normalize: normalize,
+    openSurah: openSurah,
+    renderList: renderList,
+    filterSurahs: filterSurahs,
+    getState: function () { return JSON.parse(JSON.stringify(state)); },
+    setState: function (s) { state.surah = +s.surah || 0; state.ayah = +s.ayah || 0; renderContinue(); },
+    scrollToAyah: scrollToAyah,
+    currentAyahIndex: currentAyahIndex,
+    back: function () {
+      // hardware Back button: return to the list, or signal "nothing left -> exit"
+      if (!reader.hidden) { toHome(); return true; }
+      return false;
+    }
+  };
+})();
+</script>
+</body>
+</html>

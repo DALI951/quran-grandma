@@ -1,0 +1,14 @@
+# Android / gradle
+android/app/build/
+android/app/src/main/assets/www/
+android/.gradle/
+android/local.properties
+android/app/keystore.jks
+android/app/keystore.properties
+KEYSTORE_SECRETS.txt
+
+# node
+node_modules/
+dist/
+*.log
+.DS_Store
