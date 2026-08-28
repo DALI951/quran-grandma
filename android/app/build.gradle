@@ -35,6 +35,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            // debug key by default so the APK is always signed & installable;
+            // switch to the release keystore when keystore.jks is present
+            signingConfig signingConfigs.debug
             if (keystoreFile.exists() && ksProps.size() > 0) {
                 signingConfig signingConfigs.release
             }
