@@ -14,6 +14,30 @@ Everything is local: the full Uthmani text ships in `quran-data.js` (from
 `api.alquran.cloud/v1/quran/quran-uthmani`), the font is a 45 KB woff2, and the PWA
 (`manifest.webmanifest` + `sw.js`) makes it installable and offline once hosted over HTTPS.
 
+## Android APK (built automatically by GitHub Actions)
+
+The `android/` folder is a tiny WebView wrapper — **no Capacitor/Flutter/React Native**, just
+a small `MainActivity.java` that loads `assets/www/index.html` from the APK. The data, font and
+logic ship inside the APK, so it works with zero internet.
+
+- Every push to `main` runs the `build` workflow: `npm test` → **build APK** → deploy Pages.
+- Every `v*` tag publishes a **GitHub Release with the APK attached** (`quran-grandma-vX.Y.Z.apk`).
+- The Android back button returns to the surah list, and only exits the app when already there.
+
+**Release keystore (optional but recommended).** Without it the APK is signed with a debug key
+(installs fine; reinstalling over an existing copy will be blocked once the key changes). For a
+stable signature add these repo secrets:
+
+| secret | value |
+|---|---|
+| `KEYSTORE_B64` | `base64 -w0 keystore.jks` |
+| `KEYSTORE_PASS` | store password |
+| `KEYSTORE_ALIAS` | key alias (`quran`) |
+| `KEYSTORE_KEY_PASS` | key password |
+
+A ready keystore is already on Dali's box at `android/app/keystore.jks` (`keystore.properties`
+next to it) plus `KEYSTORE_SECRETS.txt` in the repo folder — all gitignored, never commit them.
+
 ## Files
 
 | file | what |
@@ -22,6 +46,8 @@ Everything is local: the full Uthmani text ships in `quran-data.js` (from
 | `quran-data.js` | generated — 114 surahs, 6236 ayat, Uthmani script |
 | `amiri-quran.woff2` | embedded reading font |
 | `manifest.webmanifest` + `sw.js` + `icon.svg` | installable offline PWA |
+| `android/` | WebView wrapper that builds the APK (Gradle, no extra deps) |
+| `.github/workflows/build.yml` | test + APK + Pages in GitHub Actions |
 | `scripts/build-data.mjs` | rebuilds `quran-data.js` from the API |
 | `scripts/verify.js` | jsdom test suite |
 
@@ -30,7 +56,7 @@ Everything is local: the full Uthmani text ships in `quran-data.js` (from
 ```bash
 npm install
 npm run build   # rebuild quran-data.js if you ever change the source text
-npm test        # 42 checks: data integrity, search, reader, progress, font size
+npm test        # 46 checks: data integrity, search, reader, progress, back button, font size
 ```
 
 Quick preview: `python3 -m http.server 8000` inside the folder → `http://localhost:8000`.
