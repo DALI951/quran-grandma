@@ -84,25 +84,29 @@ eq(document.querySelectorAll("#surahList .srow")[0].dataset.n, "36", "filtered r
 input(document.getElementById("q"), "");
 eq(document.querySelectorAll("#surahList .srow").length, 114, "clearing search restores all 114");
 
-// ——— reader ———
+// ——— reader (flowing mushaf layout) ———
 console.log("reader");
 App.openSurah(2, false);
 ok(document.getElementById("reader").hidden === false, "reader becomes visible");
 ok(document.getElementById("home").hidden === true, "home hidden while reading");
 eq(document.querySelectorAll("#surahBody .bsml").length, 1, "surah 2 shows the basmala line");
-ok(document.querySelector("#surahBody .ayah .txt").textContent === "الٓمٓ", "surah 2 starts at ayah 'الٓمٓ'");
-eq(document.querySelectorAll("#surahBody .ayah").length, 286, "surah 2 renders all 286 ayat");
+eq(document.querySelectorAll("#surahBody .verse").length, 286, "surah 2 renders all 286 ayat");
+eq(document.querySelectorAll("#surahBody .ayah").length, 0, "verses flow inline in one block, not one per line");
+ok(document.querySelector("#surahBody .verse").textContent.startsWith("الٓمٓ"), "surah 2 starts at ayah 'الٓمٓ'");
+ok(document.querySelector("#surahBody .verse").textContent.includes("﴿١﴾"), "first verse ends with its inline marker");
+ok(document.querySelector("#surahBody .quran").textContent.includes("\uFD3F١\uFD3Eذَٰلِكَ ٱلْكِتَٰبُ"), "verse 2 flows directly after verse 1's marker, no line break");
+ok(document.querySelectorAll("#surahBody .quran").length === 1, "all verses share one flowing container");
 eq(document.getElementById("readerTitle").textContent, "البقرة", "reader title = surah name");
 ok(document.getElementById("jumpBanner").hidden, "no jump banner when nothing saved here");
 
 App.openSurah(9, false);
 eq(document.querySelectorAll("#surahBody .bsml").length, 0, "surah 9 has no basmala line");
-ok(document.querySelector("#surahBody .ayah .txt").textContent.startsWith("بَرَا"), "surah 9 starts at Bara-ah");
+ok(document.querySelector("#surahBody .verse").textContent.startsWith("بَرَا"), "surah 9 starts at Bara-ah");
 
 App.openSurah(1, false);
 eq(document.querySelectorAll("#surahBody .bsml").length, 0, "surah 1 basmala is its ayah 1, no extra line");
-ok(document.querySelector("#surahBody .ayah .txt").textContent.startsWith("بِسْمِ"), "surah 1 ayah 1 is basmala");
-eq(document.querySelectorAll("#surahBody .ayah").length, 7, "surah 1 = 7 ayat");
+ok(document.querySelector("#surahBody .verse").textContent.startsWith("بِسْمِ"), "surah 1 ayah 1 is basmala");
+eq(document.querySelectorAll("#surahBody .verse").length, 7, "surah 1 = 7 ayat");
 
 // Android back button: reader -> list, then list -> exit signal
 eq(App.back(), true, "hardware Back while reading returns to list");
@@ -132,6 +136,38 @@ const after = document.documentElement.style.getPropertyValue("--qfs");
 ok(before === "32px" && after === "38px", "A+ grows the verse font (32px -> " + after + ")");
 click(document.getElementById("fsDown"));
 eq(document.documentElement.style.getPropertyValue("--qfs"), "32px", "A- shrinks it back");
+
+// ——— saved surahs (bookmarks) ———
+console.log("saved surahs / bookmarks");
+ok(document.getElementById("favBtn").textContent === "☆", "bookmark star starts empty");
+ok(document.getElementById("favBar").hidden === true, "fav bar hidden with nothing saved");
+App.openSurah(36, false);
+eq(document.getElementById("favBtn").textContent, "☆", "star is ☆ on an unsaved surah");
+click(document.getElementById("favBtn"));
+eq(document.getElementById("favBtn").textContent, "★", "star becomes ★ after saving");
+ok(App.getState().favs.indexOf(36) !== -1, "surah 36 is in the saved list");
+ok(document.getElementById("favBar").hidden === false, "fav bar now shows (something saved)");
+ok(document.getElementById("favListBtn").textContent.includes("١"), "fav bar counts 1 saved surah");
+App.openSurah(1, false);
+eq(document.getElementById("favBtn").textContent, "☆", "another surah still shows ☆");
+App.back(); // to the list
+ok(document.getElementById("home").hidden === false, "back on home after reading");
+eq(document.querySelectorAll("#surahList .srow").length, 114, "full list shown by default");
+click(document.getElementById("favListBtn"));
+eq(document.querySelectorAll("#surahList .srow").length, 1, "saved view shows only the saved surah");
+eq(document.querySelectorAll("#surahList .srow")[0].dataset.n, "36", "…and it is surah 36");
+ok(!!document.querySelector("#surahList [data-rm]"), "'✕' remove button present in saved view");
+click(document.querySelector("#surahList [data-rm='36']"));
+eq(document.querySelectorAll("#surahList .srow").length, 0, "removing the surah empties the saved view");
+ok(!!document.querySelector("#surahList .empty"), "friendly empty hint is shown");
+ok(document.getElementById("favBar").hidden === true, "fav bar hides again when nothing is saved");
+ok(JSON.parse(window.localStorage.getItem("quran-grandma:v1")).favs.length === 0, "removal persisted to localStorage");
+click(document.getElementById("favListBtn")); // saved view off
+eq(document.querySelectorAll("#surahList .srow").length, 114, "full list restored");
+click(document.getElementById("favListBtn")); // saved view on (empty)
+ok(!!document.querySelector("#surahList .empty"), "empty saved view has the hint");
+click(document.getElementById("favListBtn")); // and off again, boot-like state
+eq(document.querySelectorAll("#surahList .srow").length, 114, "back to a normal full list");
 
 console.log("\n" + pass + " passed, " + fail + " failed");
 if (fail > 0) process.exit(1);

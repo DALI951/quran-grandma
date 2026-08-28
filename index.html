@@ -102,24 +102,35 @@
   }
   .sname{font-size:24px; font-family:"Amiri Quran",serif; font-weight:700}
   .smeta{font-size:15px; color:var(--soft); margin-inline-start:auto}
+  .rmf{
+    color:var(--acc); font-size:18px; padding:10px 8px; margin-inline-start:6px;
+    border-radius:10px; background:var(--acc-soft);
+  }
+  .empty{
+    background:var(--card); border:2px dashed var(--line); border-radius:var(--r);
+    padding:26px; text-align:center; color:var(--soft); font-size:19px;
+  }
+
+  #favBar{display:flex; gap:8px; margin-top:12px}
+  #favListBtn{
+    padding:12px 22px; border:2px solid #c9a227; background:#fff7dd; color:#7a5c00;
+    font-size:19px; border-radius:999px;
+  }
+  #favListBtn.on{background:#f3d56a; color:#4a3800}
 
   #reader article{padding:18px clamp(14px, 5vw, 60px) 90px; max-width:900px; margin:0 auto}
   .bsml{
     font-family:"Amiri Quran",serif; font-size:calc(var(--qfs)*.85);
     text-align:center; margin:8px 0 22px; color:var(--acc-ink);
   }
-  .ayah{
-    font-family:"Amiri Quran",serif; font-size:var(--qfs); line-height:2.4;
-    text-align:justify;
-    margin:0 0 .55em; padding:2px 8px; border-radius:10px;
-  }
-  .ayah .txt{word-break:break-word}
-  .ayah .num{
+  .quran{font-family:"Amiri Quran",serif; font-size:var(--qfs); line-height:2.4; text-align:justify; padding:2px 0}
+  .verse{padding:2px 4px; border-radius:6px}
+  .verse .enum{
     font-size:calc(var(--qfs)*.62); color:var(--acc); opacity:.85;
-    margin-inline-start:.4em; white-space:nowrap;
+    margin-inline:.35em; white-space:nowrap;
   }
-  .ayah.cur{background:var(--hl)}
-  .ayah.flash{animation:flash 1.2s ease-out}
+  .verse.cur{background:var(--hl)}
+  .verse.flash{animation:flash 1.2s ease-out}
   @keyframes flash{
     0%{background:var(--hl)}
     100%{background:transparent}
@@ -142,6 +153,11 @@
     margin:0; flex:1; text-align:center; color:var(--acc-ink);
   }
   #readerMeta{text-align:center; color:var(--soft); font-size:15px; margin:0 0 6px}
+  #favBtn{
+    width:52px; height:52px; border-radius:14px; border:2px solid #c9a227;
+    background:#fff7dd; font-size:26px; color:#c9a227; line-height:1;
+  }
+  #favBtn.on{background:#f3d56a; color:#7a5c00}
   .fsize{display:flex; gap:6px}
   .fsize button{
     width:46px; height:46px; border-radius:12px; border:2px solid var(--line);
@@ -177,6 +193,7 @@
     </label>
     <div id="resultCount" hidden></div>
     <div id="quickRow"></div>
+    <div id="favBar" hidden><button id="favListBtn">🔖 السور المحفوظة</button></div>
     <button id="continueBtn" class="continue" hidden></button>
   </header>
 
@@ -189,6 +206,7 @@
     <div class="readerHead">
       <button id="backBtn" aria-label="العودة إلى قائمة السور">→ القائمة</button>
       <h2 id="readerTitle"></h2>
+      <button id="favBtn" aria-label="حفظ السورة في المحفوظات">☆</button>
       <div class="fsize">
         <button id="fsDown" aria-label="تصغير الخط">أ−</button>
         <button id="fsUp" aria-label="تكبير الخط">أ+</button>
@@ -212,9 +230,10 @@
   var q = $("q"), list = $("surahList"), quickRow = $("quickRow"), rc = $("resultCount");
   var body = $("surahBody"), rTitle = $("readerTitle"), rMeta = $("readerMeta");
   var cBtn = $("continueBtn"), jumpBanner = $("jumpBanner");
+  var favBtn = $("favBtn"), favBar = $("favBar"), favListBtn = $("favListBtn");
   var SIZES = [24, 28, 32, 38, 46];
-  var state = { surah: 0, ayah: 0, size: 2 };
-  var tops = [], ayahNodes = [];
+  var state = { surah: 0, ayah: 0, size: 2, favs: [] };
+  var tops = [], ayahNodes = [], favOnlyActive = false;
 
   // ——— helpers ———
   // must mirror scripts/build-data.mjs normalize()
@@ -235,13 +254,41 @@
   function load() {
     try {
       var s = JSON.parse(localStorage.getItem(KEY) || "{}");
-      if (s) { state.surah = +s.surah || 0; state.ayah = +s.ayah || 0; state.size = +s.size || 2; }
+      if (s) {
+        state.surah = +s.surah || 0; state.ayah = +s.ayah || 0; state.size = +s.size || 2;
+        state.favs = (Array.isArray(s.favs) ? s.favs : []).map(Number).filter(function (n) {
+          return n >= 1 && n <= 114;
+        });
+      }
     } catch (e) { /* fresh start */ }
     if (SIZES.indexOf(SIZES[state.size]) === -1) state.size = 2;
   }
+  function saveState() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
+  }
   function saveProgress(surahN, ayahN) {
     state.surah = surahN; state.ayah = ayahN;
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
+    saveState();
+  }
+  function isFav(n) { return state.favs.indexOf(n) !== -1; }
+  function toggleFav(n) {
+    var i = state.favs.indexOf(n);
+    if (i === -1) state.favs.push(n); else state.favs.splice(i, 1);
+    saveState();
+  }
+  function updateFavBtn() {
+    favBtn.textContent = isFav(state.surah) ? "★" : "☆";
+    favBtn.classList.toggle("on", isFav(state.surah));
+  }
+  function favListView() { // surahs saved + currently visible
+    return D.filter(function (s) { return isFav(s.n); });
+  }
+  function renderFavBar() {
+    favBar.hidden = !state.favs.length; // space for the pill only when something is saved
+    var favs = state.favs.slice().sort(function (a, b) { return a - b; });
+    var txt = favs.length ? "السور المحفوظة · " + arNum(favs.length) : "السور المحفوظة";
+    favListBtn.textContent = "🔖 " + txt;
+    favListBtn.classList.toggle("on", favOnlyActive);
   }
 
   // ——— home / surah list ———
@@ -266,24 +313,39 @@
     });
   }
   function renderList(filtered) {
+    if (favOnlyActive) {
+      var fv = favListView();
+      if (!fv.length) {
+        rc.hidden = true;
+        list.innerHTML = '<li class="empty">ما زالوش سور محفوظة — افتح سورة واضغط على ☆</li>';
+        renderFavBar();
+        return;
+      }
+      if (!filtered) filtered = fv;
+    }
     var src = filtered || D;
     var showing = src.length;
     if (!filtered) {
       rc.hidden = true;
     } else {
       rc.hidden = false;
-      rc.textContent = "وجدنا " + arNum(showing) + " من " + arNum(D.length) + " " + (showing === 1 ? "سورة" : "سور");
+      rc.textContent = favOnlyActive
+        ? "محفوظة عندك: " + arNum(showing)
+        : "وجدنا " + arNum(showing) + " من " + arNum(D.length) + " " + (showing === 1 ? "سورة" : "سور");
     }
     list.innerHTML = src.map(function (s) {
       return '<li><button class="srow" data-n="' + s.n + '" aria-label="قراءة سورة ' + esc(s.an) + '">' +
         '<span class="snum">' + arNum(s.n) + "</span>" +
         '<span class="sname">' + esc(s.an) + "</span>" +
         '<span class="smeta">' + arNum(s.count) + " آية</span>" +
+        (favOnlyActive ? '<span class="rmf" data-rm="' + s.n + '" aria-label="حلّها من المحفوظات">✕</span>' : "") +
         "</button></li>";
     }).join("");
+    renderFavBar();
   }
   function onSearch() {
     var v = q.value;
+    favOnlyActive = false; // search takes over from the saved-surahs view
     $("qClear").hidden = !v;
     renderList(filterSurahs(v));
   }
@@ -308,14 +370,17 @@
     state.ayah = resuming ? Math.min(savedAyah || 1, s.count) : 1;
     rTitle.textContent = s.an;
     rMeta.textContent = "سورة " + s.an + " · " + arNum(s.count) + " آية";
+    updateFavBtn();
     var html = "";
     if (s.bsl) html += '<p class="bsml">' + esc(D[0].v[0]) + "</p>";
+    html += '<div class="quran">';
     for (var i = 0; i < s.v.length; i++) {
-      html += '<p class="ayah" data-i="' + i + '">' +
-        '<span class="txt">' + esc(s.v[i]) + '</span>' +
-        '<span class="num" aria-label="نهاية الآية ' + arNum(i + 1) + '">﴿' + arNum(i + 1) + "﴾</span>" +
-        "</p>";
+      html += '<span class="verse" data-i="' + i + '">' +
+        esc(s.v[i]) +
+        '<span class="enum" aria-label="نهاية الآية ' + arNum(i + 1) + '">﴿' + arNum(i + 1) + "﴾</span>" +
+        "</span>";
     }
+    html += "</div>";
     var prev = n > 1, next = n < 114;
     var nav = '<div class="navEnd">';
     if (prev) nav += '<button class="prevS" data-n="' + (n - 1) + '">→ ' + esc(D[n - 2].an) + "</button>";
@@ -323,7 +388,7 @@
     nav += '<button class="toList">☰ قائمة السور</button></div>';
     body.innerHTML = html + nav;
 
-    ayahNodes = body.querySelectorAll(".ayah");
+    ayahNodes = body.querySelectorAll(".verse");
     tops = [];
     for (i = 0; i < ayahNodes.length; i++) tops.push(ayahNodes[i].offsetTop);
 
@@ -388,6 +453,7 @@
   function toHome() {
     saveProgress(state.surah, state.ayah || 1);
     reader.hidden = true; home.hidden = false;
+    if (favOnlyActive) renderList(null); else renderFavBar();
     renderContinue();
     window.scrollTo(0, 0);
     q.focus && q.focus({ preventScroll: true });
@@ -397,7 +463,7 @@
   function setSize(i) {
     state.size = Math.max(0, Math.min(SIZES.length - 1, i));
     document.documentElement.style.setProperty("--qfs", SIZES[state.size] + "px");
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
+    saveState();
     setTimeout(function () {
       tops = [];
       for (var j = 0; j < ayahNodes.length; j++) tops.push(ayahNodes[j].offsetTop);
@@ -408,12 +474,27 @@
   q.addEventListener("input", onSearch);
   $("qClear").addEventListener("click", function () { q.value = ""; onSearch(); q.focus(); });
   list.addEventListener("click", function (e) {
+    var rm = e.target.closest("[data-rm]");
+    if (rm) {
+      toggleFav(+rm.dataset.rm);
+      renderList(null);
+      return;
+    }
     var b = e.target.closest("button[data-n]");
     if (b) openSurah(+b.dataset.n, false);
   });
   quickRow.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-n]");
     if (b) openSurah(+b.dataset.n, false);
+  });
+  favBtn.addEventListener("click", function () {
+    toggleFav(state.surah);
+    updateFavBtn();
+    renderFavBar();
+  });
+  favListBtn.addEventListener("click", function () {
+    favOnlyActive = !favOnlyActive;
+    renderList(null);
   });
   cBtn.addEventListener("click", function () {
     if (state.surah) openSurah(state.surah, true);
