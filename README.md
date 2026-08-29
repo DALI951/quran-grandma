@@ -56,7 +56,7 @@ next to it) plus `KEYSTORE_SECRETS.txt` in the repo folder — all gitignored, n
 ```bash
 npm install
 npm run build   # rebuild quran-data.js if you ever change the source text
-npm test        # 46 checks: data integrity, search, reader, progress, back button, font size
+npm test        # 70 checks: data, search, mushaf flow, bookmarks, progress, back button, font size
 ```
 
 Quick preview: `python3 -m http.server 8000` inside the folder → `http://localhost:8000`.
