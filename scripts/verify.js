@@ -169,5 +169,31 @@ ok(!!document.querySelector("#surahList .empty"), "empty saved view has the hint
 click(document.getElementById("favListBtn")); // and off again, boot-like state
 eq(document.querySelectorAll("#surahList .srow").length, 114, "back to a normal full list");
 
+// ——— legacy / old-WebView compatibility guard ———
+// The app must stay ES5 + old-CSS so it renders correctly on stock Android 5/6
+// WebViews (Chromium 37-44). Any of these tokens would break that — FAIL the build.
+console.log("legacy / old-Android compatibility");
+const BAD_TOKENS = [
+  ["closest(", "Element.closest() needs Chromium 41+"],
+  ["clamp(", "CSS clamp() needs Chromium 79+"],
+  ["gap:", "flex gap needs Chromium 84+"],
+  ["=>", "arrow functions are ES6"],
+  ["`", "template literals are ES6"],
+  ["const ", "const is ES6"],
+  ["let ", "let is ES6"],
+  [".includes(", "String.includes is ES6"],
+  [".startsWith(", "String.startsWith needs Chromium 41+"],
+  ["Array.from", "needs Chromium 45+"],
+  ["Object.assign", "needs Chromium 45+"],
+  ["backdrop-filter", "needs Chromium 76+"],
+];
+const cssPart = html.slice(html.indexOf("<style"), html.indexOf("</style>"));
+const varCount = (cssPart.match(/var\(--/g) || []).length;
+ok(cssPart.includes("LEGACY-FALLBACKS:" + varCount),
+  "every var(--token) has a literal fallback line (" + varCount + " tokens, marker matches)");
+for (const [tok, why] of BAD_TOKENS) {
+  ok(html.indexOf(tok) === -1, "no '" + tok + "' (" + why + ")");
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 if (fail > 0) process.exit(1);

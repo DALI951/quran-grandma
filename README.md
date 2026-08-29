@@ -56,8 +56,19 @@ next to it) plus `KEYSTORE_SECRETS.txt` in the repo folder — all gitignored, n
 ```bash
 npm install
 npm run build   # rebuild quran-data.js if you ever change the source text
-npm test        # 70 checks: data, search, mushaf flow, bookmarks, progress, back button, font size
+npm test        # 83 checks: data, search, mushaf flow, bookmarks, progress, plus an old-Android compat guard
 ```
+
+<details><summary>Old Android? Works.</summary>
+
+The app targets **Android 5.0+ (API 21)** with **zero permissions** and no internet.
+To render correctly even on phones whose WebView is permanently stuck on an ancient
+Chromium (37–44), the app is written in strict ES5 and its CSS uses only
+old-safe features: every `var(--token)` has a literal fallback line above it,
+no `clamp()`, no flex `gap`, no `Element.closest()`. The test suite *greps the
+source* and fails the build if anyone reintroduces a modern-only feature, so
+this can never quietly regress.
+</details>
 
 Quick preview: `python3 -m http.server 8000` inside the folder → `http://localhost:8000`.
 
