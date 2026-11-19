@@ -1,4 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="112" fill="#0b6b4a"/>
-  <text x="256" y="330" font-family="Amiri Quran, Traditional Arabic, serif" font-size="300" fill="#fdf6e3" text-anchor="middle">ﷲ</text>
+  <path d="M 108 224 C 108 156, 168 106, 256 76 C 344 106, 404 156, 404 224 L 404 404 C 404 416, 396 424, 384 424 L 128 424 C 116 424, 108 416, 108 404 Z" fill="#08543a" stroke="#e3c45a" stroke-width="10" stroke-linejoin="round"/>
+  <rect x="235" y="135" width="42" height="42" fill="#e3c45a"/>
+  <polygon points="256,126 286,156 256,186 226,156" fill="#e3c45a"/>
+  <circle cx="256" cy="156" r="9" fill="#08543a"/>
+  <circle cx="256" cy="156" r="4" fill="#fdf6e3"/>
+  <path d="M 120 254 L 392 254 L 392 376 C 344 374, 294 380, 256 394 C 218 380, 168 374, 120 376 Z" fill="#e3c45a"/>
+  <path d="M 248 382 L 264 382 L 264 412 L 256 403 L 248 412 Z" fill="#e3c45a"/>
+  <path d="M 256 252 C 228 232, 174 232, 132 244 L 132 364 C 174 354, 228 358, 256 376 Z" fill="#fdf6e3"/>
+  <path d="M 256 252 C 284 232, 338 232, 380 244 L 380 364 C 338 354, 284 358, 256 376 Z" fill="#fdf6e3"/>
+  <path d="M 256 252 L 256 376" stroke="#d5c394" stroke-width="4" stroke-linecap="round"/>
+  <g fill="none" stroke="#0b6b4a" stroke-width="5.5" stroke-linecap="round">
+    <path d="M 238 276 C 216 266, 182 266, 152 272"/>
+    <path d="M 238 298 C 216 288, 182 288, 152 294"/>
+    <path d="M 238 320 C 216 310, 182 310, 152 316"/>
+    <path d="M 238 342 C 218 333, 194 333, 174 337"/>
+    <path d="M 274 276 C 296 266, 330 266, 360 272"/>
+    <path d="M 274 298 C 296 288, 330 288, 360 294"/>
+    <path d="M 274 320 C 296 310, 330 310, 360 316"/>
+    <path d="M 274 342 C 296 332, 330 332, 360 338"/>
+  </g>
 </svg>

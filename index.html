@@ -1,618 +1,225 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="cream">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b6b4a">
-<meta name="description" content="مصحف بسيط لقراءة القرآن الكريم والبحث عن السور — يعمل بدون إنترنت">
+<meta name="theme-color" id="metaThemeColor" content="#0b6b4a">
+<meta name="description" content="مصحف بسيط ومريح لقراءة القرآن الكريم بدون إنترنت">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="styles.css">
 <title>القرآن الكريم</title>
-<style>
-  @font-face{
-    font-family:"Amiri Quran";
-    src:url("amiri-quran.woff2") format("woff2");
-    font-weight:400; font-style:normal; font-display:swap;
-  }
-  :root{
-    --bg:#f6f1e7;
-    --card:#fffdf8;
-    --ink:#2b2118;
-    --soft:#6d5f4e;
-    --acc:#0b6b4a;
-    --acc-soft:#e3efe9;
-    --acc-ink:#0a3a2a;
-    --line:#e3d9c6;
-    --hl:#fde9a0;
-    --qfs:30px;
-    --r:20px;
-  }
-  /* LEGACY-FALLBACKS:55 */
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-  [hidden]{display:none !important}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0;
-    background:#f6f1e7; background:var(--bg);
-    color:#2b2118; color:var(--ink);
-    font-family:"Segoe UI", "Noto Naskh Arabic", "Traditional Arabic", Tahoma, sans-serif;
-    font-size:20px; line-height:1.6;
-  }
-  button{font-family:inherit; cursor:pointer; touch-action:manipulation}
-  button:focus-visible, input:focus-visible, a:focus-visible{
-    outline:3px solid #0b6b4a; outline:3px solid var(--acc); outline-offset:2px;
-  }
-  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
-
-  .appbar{
-    position:sticky; top:0; z-index:20;
-    background:#fffdf8; background:var(--card);
-    border-bottom:2px solid #e3d9c6; border-bottom:2px solid var(--line);
-    padding:10px 16px 12px;
-    box-shadow:0 2px 8px rgba(43,33,24,.06);
-  }
-  h1{
-    font-family:"Amiri Quran","Amiri","Noto Naskh Arabic",serif;
-    font-size:30px; font-weight:400;
-    margin:2px 0 10px; letter-spacing:.5px;
-    color:#0a3a2a; color:var(--acc-ink);
-  }
-
-  .sbox{
-    display:flex; align-items:center;
-    background:#f2ecdd; border:2px solid #e3d9c6; border:2px solid var(--line);
-    border-radius:20px; border-radius:var(--r);
-    padding:2px 8px;
-  }
-  .sbox>*{margin:0 0 0 6px}
-  .sbox:focus-within{border-color:#0b6b4a; border-color:var(--acc); background:#fff}
-  .sbox .kbd{font-size:20px}
-  #q{
-    flex:1; border:0; background:transparent; outline:none;
-    font-size:21px; line-height:1.5; padding:10px 0; min-width:0;
-    color:#2b2118; color:var(--ink);
-  }
-  #q::placeholder{color:#a99b84}
-  #qClear{
-    background:none; border:0; font-size:18px; padding:6px 10px; border-radius:12px;
-    color:#6d5f4e; color:var(--soft);
-  }
-  #qClear:hover{background:#e7dfcd}
-
-  #resultCount{
-    padding:8px 6px 0; font-size:15px;
-    color:#6d5f4e; color:var(--soft);
-  }
-
-  #quickRow{display:flex; flex-wrap:wrap; margin:6px -6px 0}
-  .quick{
-    position:relative; margin:6px; padding:14px 22px;
-    border:2px solid #0b6b4a; border:2px solid var(--acc);
-    background:#e3efe9; background:var(--acc-soft);
-    color:#0a3a2a; color:var(--acc-ink);
-    font-size:21px; border-radius:999px; font-family:"Amiri Quran",serif;
-  }
-  .quick:hover{background:#d3e8de}
-
-  .continue{
-    display:flex; align-items:center; width:100%;
-    margin-top:12px; padding:14px 16px;
-    background:#0b6b4a; background:var(--acc); color:#f3faf6;
-    border:0; border-radius:20px; border-radius:var(--r);
-    font-size:20px; text-align:right;
-  }
-  .continue b{font-family:"Amiri Quran",serif; font-size:23px}
-  .continue .arr{margin-right:auto; font-size:24px}
-
-  #surahList{list-style:none; margin:8px 0 0; padding:0 16px 90px}
-  .srow{
-    display:flex; align-items:center; width:100%; margin-bottom:10px; padding:12px 16px;
-    background:#fffdf8; background:var(--card);
-    border:2px solid #e3d9c6; border:2px solid var(--line);
-    border-radius:20px; border-radius:var(--r);
-    color:#2b2118; color:var(--ink);
-  }
-  .srow>*{margin:0 0 0 14px}
-  .srow:hover{border-color:#0b6b4a; border-color:var(--acc)}
-  .snum{
-    flex:0 0 52px; height:52px;
-    display:flex; align-items:center; justify-content:center;
-    background:#0b6b4a; background:var(--acc); color:#f3faf6; border-radius:50%;
-    font-size:20px;
-  }
-  .sname{font-size:24px; font-family:"Amiri Quran",serif; font-weight:700}
-  .srow .smeta{
-    margin-right:auto; font-size:15px;
-    color:#6d5f4e; color:var(--soft);
-  }
-  .srow .rmf{
-    margin-right:6px; padding:10px 8px; font-size:18px; border-radius:10px;
-    background:#e3efe9; background:var(--acc-soft);
-    color:#0b6b4a; color:var(--acc);
-  }
-  .empty{
-    background:#fffdf8; background:var(--card);
-    border:2px dashed #e3d9c6; border:2px dashed var(--line);
-    border-radius:20px; border-radius:var(--r);
-    padding:26px; text-align:center; font-size:19px;
-    color:#6d5f4e; color:var(--soft);
-  }
-
-  #favBar{margin-top:12px}
-  #favListBtn{
-    padding:12px 22px; border:2px solid #c9a227; background:#fff7dd; color:#7a5c00;
-    font-size:19px; border-radius:999px;
-  }
-  #favListBtn.on{background:#f3d56a; color:#4a3800}
-
-  #reader article{padding:18px 16px 90px; max-width:900px; margin:0 auto}
-  @media (min-width:640px){ #reader article{padding-left:36px; padding-right:36px} }
-  .bsml{
-    font-family:"Amiri Quran",serif;
-    font-size:25px; font-size:calc(var(--qfs)*.85);
-    text-align:center; margin:8px 0 22px;
-    color:#0a3a2a; color:var(--acc-ink);
-  }
-  .quran{
-    font-family:"Amiri Quran",serif;
-    font-size:30px; font-size:var(--qfs);
-    line-height:2.4; text-align:justify; padding:2px 0;
-  }
-  .verse{padding:2px 4px; border-radius:6px}
-  .verse .enum{
-    font-size:18px; font-size:calc(var(--qfs)*.62);
-    color:#0b6b4a; color:var(--acc); opacity:.85;
-    margin:0 .35em; white-space:nowrap;
-  }
-  .verse.cur{background:#fde9a0; background:var(--hl)}
-  .verse.flash{animation:flash 1.2s ease-out}
-  @keyframes flash{
-    0%{background:#fde9a0; background:var(--hl)}
-    100%{background:transparent}
-  }
-
-  .navEnd{display:flex; margin:26px 0 20px}
-  .navEnd button{
-    flex:1; margin-left:10px; padding:16px 10px; font-size:19px;
-    border-radius:20px; border-radius:var(--r);
-    background:#e3efe9; background:var(--acc-soft);
-    color:#0a3a2a; color:var(--acc-ink);
-    border:2px solid #0b6b4a; border:2px solid var(--acc);
-  }
-  .navEnd .toList{background:#0b6b4a; background:var(--acc); color:#f3faf6}
-
-  .readerHead{display:flex; align-items:center; padding:6px 0}
-  .readerHead>*{margin-left:10px}
-  #backBtn{
-    background:#0b6b4a; background:var(--acc); color:#f3faf6;
-    border:0; border-radius:20px; border-radius:var(--r);
-    font-size:18px; padding:12px 18px; white-space:nowrap;
-  }
-  #readerTitle{
-    font-family:"Amiri Quran",serif; font-size:28px; font-weight:400;
-    margin:0; flex:1; text-align:center;
-    color:#0a3a2a; color:var(--acc-ink);
-  }
-  #readerMeta{
-    text-align:center; margin:0 0 6px; font-size:15px;
-    color:#6d5f4e; color:var(--soft);
-  }
-  #favBtn{
-    width:52px; height:52px; border-radius:14px; border:2px solid #c9a227;
-    background:#fff7dd; font-size:26px; color:#c9a227; line-height:1;
-  }
-  #favBtn.on{background:#f3d56a; color:#7a5c00}
-  .fsize{display:flex}
-  .fsize button{
-    width:46px; height:46px; margin-left:6px;
-    border-radius:12px; border:2px solid #e3d9c6; border:2px solid var(--line);
-    background:#fffdf8; background:var(--card);
-    font-size:20px; font-weight:700;
-    color:#2b2118; color:var(--ink);
-  }
-  .fsize button:hover{border-color:#0b6b4a; border-color:var(--acc)}
-
-  #jumpBanner{
-    display:flex; align-items:center;
-    margin:10px auto 0; max-width:900px; padding:12px 16px; font-size:18px;
-    background:#fde9a0; background:var(--hl);
-    border:2px solid #e3c45a; border-radius:20px; border-radius:var(--r);
-  }
-  #jumpBanner button{
-    margin-right:auto; border:0; padding:10px 18px; border-radius:12px; font-size:17px;
-    background:#0b6b4a; background:var(--acc); color:#fff;
-  }
-  #jumpBanner b{font-family:"Amiri Quran",serif; font-size:20px}
-
-  footer{
-    text-align:center; font-size:14px; padding:8px 16px 16px;
-    color:#6d5f4e; color:var(--soft);
-  }
-  footer a{color:#0b6b4a; color:var(--acc)}
-</style>
 </head>
 <body>
 
 <section id="home">
-  <header class="appbar">
-    <h1>القرآن الكريم</h1>
-    <label class="sbox">
-      <span class="kbd" aria-hidden="true">🔎</span>
-      <input id="q" type="text" inputmode="search" enterkeyhint="search"
-             placeholder="اكتبي اسم السورة…" autocomplete="off" spellcheck="false" aria-label="ابحثي عن سورة">
-      <button id="qClear" hidden aria-label="مسح البحث">✕</button>
-    </label>
-    <div id="resultCount" hidden></div>
-    <div id="quickRow"></div>
-    <div id="favBar" hidden><button id="favListBtn">🔖 السور المحفوظة</button></div>
-    <button id="continueBtn" class="continue" hidden></button>
+  <header class="homeTop">
+    <div class="homeBrand">
+      <h1 class="homeTitle">القرآن الكريم</h1>
+      <p class="homeSub">قراءة مريحة بدون إنترنت</p>
+    </div>
+    <button type="button" id="homeSettingsBtn" class="iconLabelBtn" aria-label="فتح الإعدادات">
+      <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.78 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span>الإعدادات</span>
+    </button>
   </header>
 
-  <ul id="surahList"></ul>
-  <footer>يقرأ مباشرة من الجهاز — بدون إنترنت</footer>
+  <div id="heroWrap" class="heroWrap" hidden>
+    <button type="button" id="continueBtn" class="continueCard">
+      <span class="heroIcon" aria-hidden="true">
+        <svg class="ico ico-lg" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+      </span>
+      <span class="heroText">
+        <span class="heroKicker">أكملي القراءة</span>
+        <span class="heroMain" id="continueText"></span>
+      </span>
+      <span class="heroArr" aria-hidden="true">
+        <svg class="ico ico-lg" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <nav id="tabBar" class="tabbar" role="tablist" aria-label="أقسام المصحف">
+    <button type="button" role="tab" id="tabBtn-favs" class="tabBtn is-active" data-tab="favs" aria-selected="true" aria-controls="panel-favs">
+      <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <span>المفضلة</span>
+    </button>
+    <button type="button" role="tab" id="tabBtn-surahs" class="tabBtn" data-tab="surahs" aria-selected="false" aria-controls="panel-surahs">
+      <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <circle cx="4" cy="6" r="1"></circle>
+        <circle cx="4" cy="12" r="1"></circle>
+        <circle cx="4" cy="18" r="1"></circle>
+      </svg>
+      <span>السور</span>
+    </button>
+    <button type="button" role="tab" id="tabBtn-juz" class="tabBtn" data-tab="juz" aria-selected="false" aria-controls="panel-juz">
+      <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span>الأجزاء</span>
+    </button>
+  </nav>
+
+  <main class="homeMain">
+    <div id="panel-favs" class="tabPanel" role="tabpanel" aria-labelledby="tabBtn-favs">
+      <section class="homeSec">
+        <h2 class="secTitle">السور المختارة</h2>
+        <div id="defaultFavsGrid" class="favGrid"></div>
+      </section>
+
+      <section class="homeSec" id="specialShortcutsSec">
+        <div id="specialShortcuts"></div>
+      </section>
+
+      <section class="homeSec" id="savedFavsSec">
+        <h2 class="secTitle">سورك المحفوظة</h2>
+        <div id="savedFavsList"></div>
+      </section>
+    </div>
+
+    <div id="panel-surahs" class="tabPanel" role="tabpanel" aria-labelledby="tabBtn-surahs" hidden>
+      <div id="rangePills" class="rangePills" aria-label="الانتقال السريع بين السور"></div>
+      <ul id="surahList" class="surahList"></ul>
+    </div>
+
+    <div id="panel-juz" class="tabPanel" role="tabpanel" aria-labelledby="tabBtn-juz" hidden>
+      <div id="juzList" class="juzList"></div>
+    </div>
+  </main>
+
+  <footer class="homeFooter">
+    <span>يقرأ مباشرة من الجهاز — بدون إنترنت</span>
+    <span id="homeVersion" class="verText"></span>
+  </footer>
 </section>
 
-<section id="reader" hidden>
-  <header class="appbar">
+<section id="reader" class="fs-2" hidden>
+  <header class="readerTop" id="readerTop">
     <div class="readerHead">
-      <button id="backBtn" aria-label="العودة إلى قائمة السور">→ القائمة</button>
-      <h2 id="readerTitle"></h2>
-      <button id="favBtn" aria-label="حفظ السورة في المحفوظات">☆</button>
-      <div class="fsize">
-        <button id="fsDown" aria-label="تصغير الخط">أ−</button>
-        <button id="fsUp" aria-label="تكبير الخط">أ+</button>
+      <button type="button" id="backBtn" class="readerBackBtn" aria-label="الرجوع إلى الرئيسية">
+        <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+        <span>رجوع</span>
+      </button>
+      <h2 id="readerTitle" class="readerTitle"></h2>
+      <button type="button" id="favBtn" class="readerFavBtn" aria-label="حفظ السورة في المحفوظات" aria-pressed="false">
+        <svg class="ico ico-star" aria-hidden="true" focusable="false" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span id="favBtnLabel">حفظ</span>
+      </button>
+    </div>
+    <p id="readerMeta" class="readerMeta"></p>
+  </header>
+
+  <div id="jumpBanner" class="jumpBanner" hidden></div>
+  <div id="readerStatus" class="readerStatus" hidden></div>
+  <article id="surahBody" class="surahBody"></article>
+
+  <nav class="readerFootBar" id="readerFootBar" aria-label="أدوات القراءة">
+    <button type="button" id="fsDown" class="footBtn footSizeBtn" aria-label="تصغير الخط">أ−</button>
+    <button type="button" id="fsUp" class="footBtn footSizeBtn" aria-label="تكبير الخط">أ+</button>
+    <button type="button" id="themeCycleBtn" class="footBtn footThemeBtn" aria-label="تغيير المظهر">
+      <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3v18"></path>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"></path>
+      </svg>
+      <span id="themeCycleLabel">ورقي</span>
+    </button>
+    <button type="button" id="readerSettingsBtn" class="footBtn footSettingsBtn" aria-label="فتح الإعدادات">
+      <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.78 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span>الإعدادات</span>
+    </button>
+  </nav>
+</section>
+
+<div id="settingsModal" class="modalOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modalBackdrop" id="settingsBackdrop"></div>
+  <div class="modalCard">
+    <div class="modalHead">
+      <h2 id="settingsTitle" class="modalTitle">الإعدادات</h2>
+      <button type="button" id="closeSettingsBtn" class="modalCloseBtn" aria-label="إغلاق الإعدادات">
+        <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>إغلاق</span>
+      </button>
+    </div>
+
+    <div class="modalBody">
+      <div class="settingGroup">
+        <p class="settingLabel">طريقة عرض الآيات</p>
+        <div class="choiceRow" id="readingModeChoices">
+          <button type="button" class="choiceBtn" data-mode="flowing">مصحف متصل</button>
+          <button type="button" class="choiceBtn" data-mode="verse">آية بآية</button>
+        </div>
+      </div>
+
+      <div class="settingGroup">
+        <p class="settingLabel">شكل الأرقام</p>
+        <div class="choiceRow" id="numeralsChoices">
+          <button type="button" class="choiceBtn" data-numerals="arabic">أرقام عربية ١٢٣</button>
+          <button type="button" class="choiceBtn" data-numerals="western">أرقام مغاربية 123</button>
+        </div>
+      </div>
+
+      <div class="settingGroup">
+        <p class="settingLabel">ألوان القراءة</p>
+        <div class="choiceRow" id="themeChoices">
+          <button type="button" class="choiceBtn" data-theme="cream">ورقي</button>
+          <button type="button" class="choiceBtn" data-theme="night">ليلي</button>
+          <button type="button" class="choiceBtn" data-theme="contrast">واضح</button>
+        </div>
+      </div>
+
+      <div class="settingGroup settingUpdates">
+        <div class="verRow">
+          <span class="settingLabel">إصدار التطبيق</span>
+          <span id="settingsVersion" class="verBadge">النسخة 2.0.0</span>
+        </div>
+        <button type="button" id="checkUpdateBtn" class="updateBtn">
+          <svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>التحقق من التحديثات</span>
+        </button>
+        <div id="updateStatus" class="updateStatus" hidden>
+          <p id="updateMsg" class="updateMsg"></p>
+          <button type="button" id="downloadUpdateBtn" class="downloadBtn" hidden>تحميل التحديث</button>
+        </div>
       </div>
     </div>
-    <p id="readerMeta"></p>
-  </header>
+  </div>
+</div>
 
-  <div id="jumpBanner" hidden></div>
-  <article id="surahBody"></article>
-</section>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="quran-data.js"></script>
-<script>
-"use strict";
-(function () {
-  var D = window.QURAN_DATA;
-  var KEY = "quran-grandma:v1";
-  var $ = function (id) { return document.getElementById(id); };
-  var home = $("home"), reader = $("reader");
-  var q = $("q"), list = $("surahList"), quickRow = $("quickRow"), rc = $("resultCount");
-  var body = $("surahBody"), rTitle = $("readerTitle"), rMeta = $("readerMeta");
-  var cBtn = $("continueBtn"), jumpBanner = $("jumpBanner");
-  var favBtn = $("favBtn"), favBar = $("favBar"), favListBtn = $("favListBtn");
-  var SIZES = [24, 28, 32, 38, 46];
-  var state = { surah: 0, ayah: 0, size: 2, favs: [] };
-  var tops = [], ayahNodes = [], favOnlyActive = false;
-
-  // ——— helpers ———
-  // must mirror scripts/build-data.mjs normalize()
-  function normalize(s) {
-    return (String(s || ""))
-      .replace(/[أإآٱ]/g, "ا")
-      .replace(/ى/g, "ي")
-      .replace(/ة/g, "ه")
-      .replace(/[٠-٩]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩".indexOf(d); })
-      .replace(/[\u0640\u064B-\u0652\u0653\u0654\u0670\u06D6-\u06ED]/g, "")
-      .replace(/سور[هة]\s*/gi, "")
-      .trim().toLowerCase();
-  }
-  function arNum(n) { return String(n).replace(/[0-9]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[+d]; }); }
-  function esc(s) {
-    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  }
-  // parent walker — find-up navigation that works on ancient WebViews
-  function walkUp(el, fn) {
-    var n = el;
-    while (n && n.nodeType === 1) {
-      if (n.getAttribute && fn(n)) return n;
-      n = n.parentElement;
-    }
-    return null;
-  }
-  function isBtn(n) { return n.tagName && n.tagName.toLowerCase() === "button"; }
-  function btnDataN(n) { return isBtn(n) && n.getAttribute("data-n") !== null; }
-  function hasAttr(a) { return function (n) { return n.getAttribute(a) !== null; }; }
-  function load() {
-    try {
-      var s = JSON.parse(localStorage.getItem(KEY) || "{}");
-      if (s) {
-        state.surah = +s.surah || 0; state.ayah = +s.ayah || 0; state.size = +s.size || 2;
-        state.favs = (Array.isArray(s.favs) ? s.favs : []).map(Number).filter(function (n) {
-          return n >= 1 && n <= 114;
-        });
-      }
-    } catch (e) { /* fresh start */ }
-    if (SIZES.indexOf(SIZES[state.size]) === -1) state.size = 2;
-  }
-  function saveState() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
-  }
-  function saveProgress(surahN, ayahN) {
-    state.surah = surahN; state.ayah = ayahN;
-    saveState();
-  }
-  function isFav(n) { return state.favs.indexOf(n) !== -1; }
-  function toggleFav(n) {
-    var i = state.favs.indexOf(n);
-    if (i === -1) state.favs.push(n); else state.favs.splice(i, 1);
-    saveState();
-  }
-  function updateFavBtn() {
-    favBtn.textContent = isFav(state.surah) ? "★" : "☆";
-    favBtn.classList.toggle("on", isFav(state.surah));
-  }
-  function favListView() { // surahs saved + currently visible
-    return D.filter(function (s) { return isFav(s.n); });
-  }
-  function renderFavBar() {
-    favBar.hidden = !state.favs.length; // space for the pill only when something is saved
-    var favs = state.favs.slice().sort(function (a, b) { return a - b; });
-    var txt = favs.length ? "السور المحفوظة · " + arNum(favs.length) : "السور المحفوظة";
-    favListBtn.textContent = "🔖 " + txt;
-    favListBtn.classList.toggle("on", favOnlyActive);
-  }
-
-  // ——— home / surah list ———
-  var QUICK = [1, 36, 55, 56, 67, 18]; // الفاتحة، يس، الرحمن، الواقعة، الملك، الكهف
-  function renderQuick() {
-    quickRow.innerHTML = QUICK.map(function (n) {
-      var s = D[n - 1];
-      return '<button class="quick" data-n="' + n + '">' + esc(s.an) + "</button>";
-    }).join("");
-  }
-  function filterSurahs(rawQuery) {
-    var qq = normalize(rawQuery);
-    if (!qq) return null;
-    var digits = qq.match(/^(\d{1,3})$/);
-    var num = digits ? parseInt(digits[1], 10) : 0;
-    return D.filter(function (s) {
-      if (num && s.n === num) return true;
-      if (s.search.indexOf(qq) !== -1) return true;
-      if (s.an.toLowerCase().indexOf(qq) !== -1) return true;
-      if (s.en.indexOf(qq) !== -1) return true;
-      return false;
-    });
-  }
-  function renderList(filtered) {
-    if (favOnlyActive) {
-      var fv = favListView();
-      if (!fv.length) {
-        rc.hidden = true;
-        list.innerHTML = '<li class="empty">ما زالوش سور محفوظة — افتح سورة واضغط على ☆</li>';
-        renderFavBar();
-        return;
-      }
-      if (!filtered) filtered = fv;
-    }
-    var src = filtered || D;
-    var showing = src.length;
-    if (!filtered) {
-      rc.hidden = true;
-    } else {
-      rc.hidden = false;
-      rc.textContent = favOnlyActive
-        ? "محفوظة عندك: " + arNum(showing)
-        : "وجدنا " + arNum(showing) + " من " + arNum(D.length) + " " + (showing === 1 ? "سورة" : "سور");
-    }
-    list.innerHTML = src.map(function (s) {
-      return '<li><button class="srow" data-n="' + s.n + '" aria-label="قراءة سورة ' + esc(s.an) + '">' +
-        '<span class="snum">' + arNum(s.n) + "</span>" +
-        '<span class="sname">' + esc(s.an) + "</span>" +
-        '<span class="smeta">' + arNum(s.count) + " آية</span>" +
-        (favOnlyActive ? '<span class="rmf" data-rm="' + s.n + '" aria-label="حلّها من المحفوظات">✕</span>' : "") +
-        "</button></li>";
-    }).join("");
-    renderFavBar();
-  }
-  function onSearch() {
-    var v = q.value;
-    favOnlyActive = false; // search takes over from the saved-surahs view
-    $("qClear").hidden = !v;
-    renderList(filterSurahs(v));
-  }
-
-  // ——— continue banner (home) ———
-  function renderContinue() {
-    if (!state.surah) { cBtn.hidden = true; return; }
-    var s = D[state.surah - 1];
-    if (!s) { cBtn.hidden = true; return; }
-    cBtn.hidden = false;
-    cBtn.innerHTML = '📖 وصلتي إلى سورة <b>' + esc(s.an) + "</b>، آية " + arNum(state.ayah) +
-      ' <span class="arr" aria-hidden="true">←</span>';
-  }
-
-  // ——— reader ———
-  function buildSurah(n) {
-    var s = D[n - 1];
-    if (!s) return;
-    var resuming = state.surah === n; // saved spot belongs to THIS surah?
-    var savedAyah = state.ayah;
-    state.surah = n;
-    state.ayah = resuming ? Math.min(savedAyah || 1, s.count) : 1;
-    rTitle.textContent = s.an;
-    rMeta.textContent = "سورة " + s.an + " · " + arNum(s.count) + " آية";
-    updateFavBtn();
-    var html = "";
-    if (s.bsl) html += '<p class="bsml">' + esc(D[0].v[0]) + "</p>";
-    html += '<div class="quran">';
-    for (var i = 0; i < s.v.length; i++) {
-      html += '<span class="verse" data-i="' + i + '">' +
-        esc(s.v[i]) +
-        '<span class="enum" aria-label="نهاية الآية ' + arNum(i + 1) + '">﴿' + arNum(i + 1) + "﴾</span>" +
-        "</span>";
-    }
-    html += "</div>";
-    var prev = n > 1, next = n < 114;
-    var nav = '<div class="navEnd">';
-    if (prev) nav += '<button class="prevS" data-n="' + (n - 1) + '">→ ' + esc(D[n - 2].an) + "</button>";
-    if (next) nav += '<button class="nextS" data-n="' + (n + 1) + '">← ' + esc(D[n].an) + "</button>";
-    nav += '<button class="toList">☰ قائمة السور</button></div>';
-    body.innerHTML = html + nav;
-
-    ayahNodes = body.querySelectorAll(".verse");
-    tops = [];
-    for (i = 0; i < ayahNodes.length; i++) tops.push(ayahNodes[i].offsetTop);
-
-    jumpBanner.innerHTML = "";
-    if (state.surah === n && state.ayah > 1) {
-      jumpBanner.hidden = false;
-      jumpBanner.innerHTML = "هنا وصلتي: الآية <b>" + arNum(state.ayah) + "</b>" +
-        '<button id="jumpGo">واصلي من هنا</button>';
-    } else {
-      jumpBanner.hidden = true;
-    }
-  }
-  function currentAyahIndex() {
-    if (!tops.length) return 0;
-    var mark = window.scrollY + window.innerHeight * 0.30;
-    var lo = 0, hi = tops.length - 1, ans = 0;
-    while (lo <= hi) {
-      var mid = (lo + hi) >> 1;
-      if (tops[mid] <= mark) { ans = mid; lo = mid + 1; } else { hi = mid - 1; }
-    }
-    return ans;
-  }
-  var lastMark = -1, tick = 0;
-  function trackSave() {
-    tick++;
-    var warned = false;
-    var idx = currentAyahIndex();
-    if (idx === lastMark) return;
-    lastMark = idx;
-    for (var i = 0; i < ayahNodes.length; i++) {
-      if (idx === i) ayahNodes[i].classList.add("cur");
-      else ayahNodes[i].classList.remove("cur");
-    }
-    saveProgress(state.surah, idx + 1);
-  }
-  var scrolled = false;
-  function onScroll() {
-    if (!scrolled) { scrolled = true; jumpBanner.hidden = true; }
-    requestAnimationFrame(trackSave);
-  }
-  function openSurah(n, fromContinue) {
-    buildSurah(n);
-    home.hidden = true; reader.hidden = false;
-    window.scrollTo(0, 0);
-    if (fromContinue && state.ayah > 1) {
-      requestAnimationFrame(function () {
-        scrollToAyah(state.ayah);
-        lastMark = -1; trackSave();
-      });
-    } else {
-      lastMark = -1; trackSave();
-    }
-  }
-  function scrollToAyah(v) {
-    var i = Math.min(v - 1, tops.length - 1);
-    window.scrollTo(0, Math.max(0, tops[i] - 14));
-    if (ayahNodes[i]) {
-      ayahNodes[i].classList.add("flash");
-      setTimeout(function () { ayahNodes[i].classList.remove("flash"); }, 1300);
-    }
-  }
-  function toHome() {
-    saveProgress(state.surah, state.ayah || 1);
-    reader.hidden = true; home.hidden = false;
-    if (favOnlyActive) renderList(null); else renderFavBar();
-    renderContinue();
-    window.scrollTo(0, 0);
-    q.focus && q.focus({ preventScroll: true });
-  }
-
-  // ——— font size ———
-  function setSize(i) {
-    state.size = Math.max(0, Math.min(SIZES.length - 1, i));
-    document.documentElement.style.setProperty("--qfs", SIZES[state.size] + "px");
-    saveState();
-    setTimeout(function () {
-      tops = [];
-      for (var j = 0; j < ayahNodes.length; j++) tops.push(ayahNodes[j].offsetTop);
-    }, 60);
-  }
-
-  // ——— events ———
-  q.addEventListener("input", onSearch);
-  $("qClear").addEventListener("click", function () { q.value = ""; onSearch(); q.focus(); });
-  list.addEventListener("click", function (e) {
-    var rm = walkUp(e.target, hasAttr("data-rm"));
-    if (rm) {
-      toggleFav(+rm.getAttribute("data-rm"));
-      renderList(null);
-      return;
-    }
-    var b = walkUp(e.target, btnDataN);
-    if (b) openSurah(+b.dataset.n, false);
-  });
-  quickRow.addEventListener("click", function (e) {
-    var b = walkUp(e.target, btnDataN);
-    if (b) openSurah(+b.dataset.n, false);
-  });
-  favBtn.addEventListener("click", function () {
-    toggleFav(state.surah);
-    updateFavBtn();
-    renderFavBar();
-  });
-  favListBtn.addEventListener("click", function () {
-    favOnlyActive = !favOnlyActive;
-    renderList(null);
-  });
-  cBtn.addEventListener("click", function () {
-    if (state.surah) openSurah(state.surah, true);
-  });
-  $("backBtn").addEventListener("click", toHome);
-  body.addEventListener("click", function (e) {
-    var b = walkUp(e.target, isBtn);
-    if (!b) return;
-    if (b.classList.contains("prevS") || b.classList.contains("nextS")) openSurah(+b.dataset.n, false);
-    else if (b.classList.contains("toList")) toHome();
-  });
-  jumpBanner.addEventListener("click", function (e) {
-    if (e.target && e.target.id === "jumpGo") {
-      jumpBanner.hidden = true;
-      scrollToAyah(state.ayah);
-    }
-  });
-  $("fsUp").addEventListener("click", function () { setSize(state.size + 1); });
-  $("fsDown").addEventListener("click", function () { setSize(state.size - 1); });
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", function () {
-    setTimeout(function () {
-      tops = [];
-      for (var j = 0; j < ayahNodes.length; j++) tops.push(ayahNodes[j].offsetTop);
-    }, 120);
-  });
-
-  // ——— boot ———
-  load();
-  setSize(state.size);
-  renderQuick();
-  renderList(null);
-  renderContinue();
-  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register("sw.js").catch(function () { /* offline file use */ });
-  }
-
-  // exposed for the test harness / debugging / the Android back button
-  window.App = {
-    data: D,
-    normalize: normalize,
-    openSurah: openSurah,
-    renderList: renderList,
-    filterSurahs: filterSurahs,
-    getState: function () { return JSON.parse(JSON.stringify(state)); },
-    setState: function (s) { state.surah = +s.surah || 0; state.ayah = +s.ayah || 0; renderContinue(); },
-    scrollToAyah: scrollToAyah,
-    currentAyahIndex: currentAyahIndex,
-    back: function () {
-      // hardware Back button: return to the list, or signal "nothing left -> exit"
-      if (!reader.hidden) { toHome(); return true; }
-      return false;
-    }
-  };
-})();
-</script>
+<script src="app-config.js"></script>
+<script src="data/meta.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

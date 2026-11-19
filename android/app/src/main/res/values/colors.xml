@@ -2,4 +2,5 @@
 <resources>
     <color name="cream">#F6F1E7</color>
     <color name="green">#0B6B4A</color>
+    <color name="green_dark">#08543A</color>
 </resources>

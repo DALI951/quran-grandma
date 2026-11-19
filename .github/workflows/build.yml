@@ -54,8 +54,10 @@ jobs:
 
       - name: Bundle web app into android assets
         run: |
+          rm -rf android/app/src/main/assets/www
           mkdir -p android/app/src/main/assets/www
-          cp index.html quran-data.js amiri-quran.woff2 icon.svg manifest.webmanifest sw.js android/app/src/main/assets/www/
+          cp index.html styles.css app-config.js app.js amiri-quran.woff2 icon.svg icon-192.png icon-512.png manifest.webmanifest sw.js android/app/src/main/assets/www/
+          cp -r data android/app/src/main/assets/www/
 
       - name: Build APK
         uses: gradle/actions/setup-gradle@v4
@@ -96,8 +98,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Stage the hosted web app
         run: |
+          rm -rf staging
           mkdir -p staging
-          cp index.html quran-data.js amiri-quran.woff2 icon.svg manifest.webmanifest sw.js staging/
+          cp index.html styles.css app-config.js app.js amiri-quran.woff2 icon.svg icon-192.png icon-512.png manifest.webmanifest sw.js staging/
+          cp -r data staging/
           touch staging/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

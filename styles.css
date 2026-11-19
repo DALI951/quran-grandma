@@ -1,0 +1,1452 @@
+@font-face{
+  font-family:"Amiri Quran";
+  src:url("amiri-quran.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root{
+  --bg:#f6f1e7;
+  --card:#fffdf8;
+  --card-alt:#efe7d6;
+  --ink:#1f1710;
+  --soft:#4d4033;
+  --acc:#0a5c40;
+  --acc-press:#074530;
+  --acc-soft:#dfeee7;
+  --acc-ink:#063b29;
+  --line:#d6cbb6;
+  --hl:#fde99a;
+  --gold-bg:#fff5d1;
+  --gold-bd:#b88b14;
+  --gold-ink:#523b00;
+  --qfs:32px;
+  --r:18px;
+}
+
+/* LEGACY-FALLBACKS:170 */
+
+html[data-theme="night"]{
+  --bg:#121815;
+  --card:#1a231e;
+  --card-alt:#222e27;
+  --ink:#eef4f0;
+  --soft:#bfd0c6;
+  --acc:#116345;
+  --acc-press:#0d4f37;
+  --acc-soft:#1f352b;
+  --acc-ink:#9be8c8;
+  --line:#2f4037;
+  --hl:#4a3b10;
+  --gold-bg:#2a2414;
+  --gold-bd:#c89f32;
+  --gold-ink:#fde494;
+}
+
+html[data-theme="contrast"]{
+  --bg:#000000;
+  --card:#0d0d0d;
+  --card-alt:#1a1a1a;
+  --ink:#ffffff;
+  --soft:#e6e6e6;
+  --acc:#005a3b;
+  --acc-press:#003d28;
+  --acc-soft:#1a1a1a;
+  --acc-ink:#ffe14d;
+  --line:#ffffff;
+  --hl:#ffe14d;
+  --gold-bg:#1a1600;
+  --gold-bd:#ffe14d;
+  --gold-ink:#ffe14d;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:#f6f1e7; background:var(--bg);
+  color:#1f1710; color:var(--ink);
+  font-family:"Noto Sans Arabic", "Droid Arabic Kufi", "Segoe UI", Tahoma, Arial, sans-serif;
+  font-size:19px;
+  line-height:1.6;
+}
+
+button{
+  font-family:inherit;
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-transition:transform 0.08s ease, background-color 0.12s ease;
+  transition:transform 0.08s ease, background-color 0.12s ease;
+}
+button:active{
+  -webkit-transform:scale(0.98);
+  transform:scale(0.98);
+}
+button:focus-visible{
+  outline:3px solid #0a5c40; outline:3px solid var(--acc);
+  outline-offset:2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+
+.ico{
+  width:22px;
+  height:22px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+}
+.ico-lg{width:26px; height:26px}
+
+/* ===== Home Top Bar (non-sticky) ===== */
+.homeTop{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:space-between;
+  justify-content:space-between;
+  padding:14px 14px 10px;
+  background:#fffdf8; background:var(--card);
+  border-bottom:2px solid #d6cbb6; border-bottom:2px solid var(--line);
+}
+.homeBrand{min-width:0; padding-left:8px}
+.homeTitle{
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-size:30px;
+  font-weight:400;
+  margin:0;
+  line-height:1.35;
+  color:#063b29; color:var(--acc-ink);
+}
+.homeSub{
+  margin:2px 0 0;
+  font-size:15px;
+  color:#4d4033; color:var(--soft);
+}
+.iconLabelBtn{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  min-height:48px;
+  padding:8px 14px;
+  border-radius:14px;
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  background:#efe7d6; background:var(--card-alt);
+  color:#1f1710; color:var(--ink);
+  font-size:16px;
+  font-weight:700;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.iconLabelBtn .ico{margin-left:6px}
+.iconLabelBtn:active{background:#dfeee7; background:var(--acc-soft)}
+
+/* ===== Hero Continue Card ===== */
+.heroWrap{
+  padding:14px 14px 4px;
+  max-width:860px;
+  margin:0 auto;
+}
+.continueCard{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  width:100%;
+  min-height:80px;
+  padding:16px;
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  border:2px solid #074530; border:2px solid var(--acc-press);
+  border-radius:18px; border-radius:var(--r);
+  text-align:right;
+  box-shadow:0 4px 14px rgba(10,92,64,0.22);
+}
+.continueCard:active{background:#074530; background:var(--acc-press)}
+.heroIcon{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.16);
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  margin-left:12px;
+  flex-shrink:0;
+}
+.heroText{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+}
+.heroKicker{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#dff5eb;
+}
+.heroMain{
+  display:block;
+  font-size:21px;
+  font-weight:700;
+  line-height:1.45;
+  color:#ffffff;
+}
+.heroArr{
+  margin-right:8px;
+  flex-shrink:0;
+}
+
+/* ===== Sticky 3-Tab Bar ===== */
+.tabbar{
+  position:-webkit-sticky;
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:-webkit-flex;
+  display:flex;
+  background:#fffdf8; background:var(--card);
+  border-bottom:2px solid #d6cbb6; border-bottom:2px solid var(--line);
+  padding:8px 10px 0;
+  margin-top:8px;
+  box-shadow:0 2px 8px rgba(31,23,16,0.06);
+}
+.tabBtn{
+  -webkit-flex:1;
+  flex:1;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  min-height:54px;
+  margin:0 3px;
+  padding:10px 6px;
+  border:0;
+  border-bottom:4px solid transparent;
+  border-radius:14px 14px 0 0;
+  background:transparent;
+  color:#4d4033; color:var(--soft);
+  font-size:17px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tabBtn .ico{margin-left:6px; width:20px; height:20px}
+.tabBtn.is-active{
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  border-bottom-color:#0a5c40; border-bottom-color:var(--acc);
+}
+
+/* ===== Home Main Content ===== */
+.homeMain{
+  max-width:860px;
+  margin:0 auto;
+  padding:14px 14px 28px;
+}
+.homeSec{margin-bottom:22px}
+.secTitle{
+  margin:0 0 10px;
+  font-size:19px;
+  font-weight:700;
+  color:#063b29; color:var(--acc-ink);
+}
+
+/* 2-column Favorites Grid (Chromium 37 compatible flex wrap) */
+.favGrid{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  margin:0 -6px;
+}
+.favCell{
+  width:50%;
+  padding:6px;
+}
+.favCard{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-direction:column;
+  flex-direction:column;
+  -webkit-justify-content:center;
+  justify-content:center;
+  width:100%;
+  min-height:92px;
+  padding:12px 12px;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:18px; border-radius:var(--r);
+  color:#1f1710; color:var(--ink);
+  text-align:right;
+  position:relative;
+}
+.favCard:active{
+  background:#dfeee7; background:var(--acc-soft);
+  border-color:#0a5c40; border-color:var(--acc);
+}
+.favCardTop{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:space-between;
+  justify-content:space-between;
+}
+.favCardName{
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-size:25px;
+  font-weight:400;
+  line-height:1.45;
+  color:#1f1710; color:var(--ink);
+}
+.favCardStar{
+  color:#b88b14; color:var(--gold-bd);
+  flex-shrink:0;
+  margin-right:4px;
+}
+.favCardMeta{
+  margin-top:4px;
+  font-size:16px;
+  color:#4d4033; color:var(--soft);
+}
+.favCardProg{
+  display:inline-block;
+  margin-top:6px;
+  padding:2px 9px;
+  border-radius:999px;
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  font-size:14px;
+  font-weight:700;
+  -webkit-align-self:flex-start;
+  align-self:flex-start;
+}
+
+/* Special Shortcut (Ayat al-Kursi) */
+.specialCard{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  width:100%;
+  min-height:80px;
+  padding:14px 16px;
+  margin-bottom:10px;
+  background:#fff5d1; background:var(--gold-bg);
+  border:2px solid #b88b14; border:2px solid var(--gold-bd);
+  border-radius:18px; border-radius:var(--r);
+  color:#523b00; color:var(--gold-ink);
+  text-align:right;
+}
+.specialCard:active{opacity:0.9}
+.specialIcon{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:#b88b14; background:var(--gold-bd);
+  color:#ffffff;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  margin-left:12px;
+  flex-shrink:0;
+}
+.specialBody{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+}
+.specialTitle{
+  display:block;
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-size:25px;
+  font-weight:400;
+  line-height:1.4;
+}
+.specialSub{
+  display:block;
+  font-size:16px;
+  font-weight:700;
+  margin-top:2px;
+}
+
+/* Saved Surahs (Custom Starred) */
+.savedItem{
+  margin-bottom:10px;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:18px; border-radius:var(--r);
+  overflow:hidden;
+}
+.savedRow{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:stretch;
+  align-items:stretch;
+}
+.savedOpenBtn{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+  min-height:72px;
+  padding:12px 14px;
+  background:transparent;
+  border:0;
+  color:#1f1710; color:var(--ink);
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  text-align:right;
+}
+.savedOpenBtn:active{background:#dfeee7; background:var(--acc-soft)}
+.savedRemoveBtn{
+  min-width:74px;
+  min-height:72px;
+  padding:10px 12px;
+  background:#efe7d6; background:var(--card-alt);
+  border:0;
+  border-right:2px solid #d6cbb6; border-right:2px solid var(--line);
+  color:#4d4033; color:var(--soft);
+  font-size:16px;
+  font-weight:700;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-direction:column;
+  flex-direction:column;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.savedRemoveBtn:active{background:#dfeee7; background:var(--acc-soft)}
+.savedConfirm{
+  padding:12px 14px;
+  background:#fff5d1; background:var(--gold-bg);
+  color:#523b00; color:var(--gold-ink);
+  border-top:2px solid #b88b14; border-top:2px solid var(--gold-bd);
+}
+.savedConfirmText{
+  margin:0 0 10px;
+  font-size:17px;
+  font-weight:700;
+}
+.savedConfirmBtns{
+  display:-webkit-flex;
+  display:flex;
+}
+.confirmYesBtn, .confirmNoBtn{
+  -webkit-flex:1;
+  flex:1;
+  min-height:48px;
+  padding:8px 12px;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:700;
+  border:2px solid #0a5c40; border:2px solid var(--acc);
+}
+.confirmYesBtn{
+  margin-left:8px;
+  background:#fffdf8; background:var(--card);
+  color:#1f1710; color:var(--ink);
+  border-color:#b88b14; border-color:var(--gold-bd);
+}
+.confirmNoBtn{
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+}
+.hintCard{
+  padding:18px 16px;
+  background:#fffdf8; background:var(--card);
+  border:2px dashed #d6cbb6; border:2px dashed var(--line);
+  border-radius:18px; border-radius:var(--r);
+  color:#4d4033; color:var(--soft);
+  font-size:17px;
+  text-align:center;
+}
+
+/* ===== Tab 2: Surahs ===== */
+.rangePills{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  margin:0 -4px 12px;
+}
+.rangePill{
+  -webkit-flex:1 1 46%;
+  flex:1 1 46%;
+  min-height:52px;
+  margin:4px;
+  padding:8px 10px;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:14px;
+  color:#1f1710; color:var(--ink);
+  font-size:17px;
+  font-weight:700;
+  text-align:center;
+}
+.rangePill .rangeSub{
+  display:block;
+  font-size:14px;
+  font-weight:400;
+  color:#4d4033; color:var(--soft);
+}
+.rangePill.is-active, .rangePill:active{
+  background:#dfeee7; background:var(--acc-soft);
+  border-color:#0a5c40; border-color:var(--acc);
+  color:#063b29; color:var(--acc-ink);
+}
+
+.surahList{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.surahList li{margin-bottom:10px}
+.srow{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  width:100%;
+  min-height:74px;
+  padding:12px 14px;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:18px; border-radius:var(--r);
+  color:#1f1710; color:var(--ink);
+  text-align:right;
+}
+.srow:active{
+  background:#dfeee7; background:var(--acc-soft);
+  border-color:#0a5c40; border-color:var(--acc);
+}
+.snum{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  font-size:18px;
+  font-weight:700;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  margin-left:12px;
+  flex-shrink:0;
+}
+.sinfo{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+}
+.sname{
+  display:block;
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-size:25px;
+  font-weight:400;
+  line-height:1.4;
+  color:#1f1710; color:var(--ink);
+}
+.smetaRow{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  -webkit-align-items:center;
+  align-items:center;
+  margin-top:2px;
+}
+.smeta{
+  font-size:16px;
+  color:#4d4033; color:var(--soft);
+  margin-left:10px;
+}
+.sprog{
+  display:inline-block;
+  padding:2px 9px;
+  border-radius:999px;
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  font-size:14px;
+  font-weight:700;
+}
+.sstar{
+  color:#b88b14; color:var(--gold-bd);
+  margin-right:8px;
+  flex-shrink:0;
+}
+
+/* ===== Tab 3: Juz ===== */
+.juzList{margin:0; padding:0}
+.juzCard{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  width:100%;
+  min-height:78px;
+  margin-bottom:10px;
+  padding:12px 14px;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:18px; border-radius:var(--r);
+  color:#1f1710; color:var(--ink);
+  text-align:right;
+}
+.juzCard.is-famous{
+  border-color:#b88b14; border-color:var(--gold-bd);
+}
+.juzCard:active{
+  background:#dfeee7; background:var(--acc-soft);
+  border-color:#0a5c40; border-color:var(--acc);
+}
+.juzNum{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  border:2px solid #0a5c40; border:2px solid var(--acc);
+  font-size:19px;
+  font-weight:700;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  margin-left:12px;
+  flex-shrink:0;
+}
+.juzBody{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+}
+.juzTopLine{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  -webkit-align-items:center;
+  align-items:center;
+}
+.juzTitle{
+  font-size:20px;
+  font-weight:700;
+  color:#1f1710; color:var(--ink);
+  margin-left:8px;
+}
+.juzBadge{
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:999px;
+  background:#fff5d1; background:var(--gold-bg);
+  border:1px solid #b88b14; border:1px solid var(--gold-bd);
+  color:#523b00; color:var(--gold-ink);
+  font-size:15px;
+  font-weight:700;
+}
+.juzSub{
+  margin-top:4px;
+  font-size:16px;
+  color:#4d4033; color:var(--soft);
+}
+
+.homeFooter{
+  text-align:center;
+  padding:10px 16px 24px;
+  font-size:15px;
+  color:#4d4033; color:var(--soft);
+}
+.verText{
+  display:block;
+  margin-top:4px;
+  font-size:14px;
+}
+
+/* ===== Reader View ===== */
+.readerTop{
+  position:-webkit-sticky;
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:#fffdf8; background:var(--card);
+  border-bottom:2px solid #d6cbb6; border-bottom:2px solid var(--line);
+  padding:8px 10px;
+  box-shadow:0 2px 8px rgba(31,23,16,0.08);
+}
+.readerHead{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+}
+.readerBackBtn{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  min-height:48px;
+  padding:8px 12px;
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  border:0;
+  border-radius:14px;
+  font-size:17px;
+  font-weight:700;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.readerBackBtn .ico{margin-left:4px; width:20px; height:20px}
+.readerTitle{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+  margin:0 8px;
+  text-align:center;
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-size:26px;
+  font-weight:400;
+  line-height:1.35;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:#063b29; color:var(--acc-ink);
+}
+.readerFavBtn{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  min-height:48px;
+  padding:8px 12px;
+  background:#fff5d1; background:var(--gold-bg);
+  color:#523b00; color:var(--gold-ink);
+  border:2px solid #b88b14; border:2px solid var(--gold-bd);
+  border-radius:14px;
+  font-size:16px;
+  font-weight:700;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.readerFavBtn .ico-star{
+  width:20px;
+  height:20px;
+  margin-left:5px;
+  fill:none;
+}
+.readerFavBtn.on{
+  background:#b88b14; background:var(--gold-bd);
+  color:#ffffff;
+}
+.readerFavBtn.on .ico-star{fill:currentColor}
+.readerMeta{
+  margin:4px 0 0;
+  text-align:center;
+  font-size:15px;
+  color:#4d4033; color:var(--soft);
+}
+
+.jumpBanner{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  max-width:860px;
+  margin:12px auto 0;
+  padding:12px 14px;
+  background:#fff5d1; background:var(--gold-bg);
+  border:2px solid #b88b14; border:2px solid var(--gold-bd);
+  border-radius:18px; border-radius:var(--r);
+  color:#523b00; color:var(--gold-ink);
+  font-size:18px;
+  font-weight:700;
+}
+.jumpBanner .jumpText{
+  -webkit-flex:1;
+  flex:1;
+  padding-left:10px;
+}
+.jumpBanner button{
+  min-height:48px;
+  padding:8px 16px;
+  border:0;
+  border-radius:12px;
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  font-size:17px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.readerStatus{
+  max-width:860px;
+  margin:24px auto;
+  padding:22px 16px;
+  text-align:center;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:18px; border-radius:var(--r);
+  font-size:20px;
+}
+.retryBtn{
+  margin-top:12px;
+  min-height:48px;
+  padding:10px 20px;
+  border:0;
+  border-radius:14px;
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  font-size:18px;
+  font-weight:700;
+}
+
+.surahBody{
+  max-width:860px;
+  margin:0 auto;
+  padding:14px 16px 104px;
+}
+@media (min-width:640px){
+  .surahBody{padding:18px 34px 110px}
+}
+
+.pageInfoPill{
+  text-align:center;
+  margin:4px 0 14px;
+  padding:6px 14px;
+  border-radius:999px;
+  background:#efe7d6; background:var(--card-alt);
+  color:#4d4033; color:var(--soft);
+  font-size:16px;
+  font-weight:700;
+}
+
+.bsml{
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-weight:400;
+  text-align:center;
+  margin:8px 0 22px;
+  color:#063b29; color:var(--acc-ink);
+  line-height:2;
+}
+
+.quran{
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, serif;
+  font-weight:400;
+  text-align:right;
+  padding:4px 0;
+  word-spacing:1px;
+}
+.quran.mode-flowing{line-height:2.35}
+.quran.mode-flowing .verse{
+  display:inline;
+  padding:3px 4px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.quran.mode-verse{line-height:2.15}
+.quran.mode-verse .verse{
+  display:block;
+  padding:14px 14px;
+  margin-bottom:12px;
+  background:#fffdf8; background:var(--card);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:16px;
+  cursor:pointer;
+}
+.verse .enum{
+  font-family:"Amiri Quran", "Noto Naskh Arabic", "Droid Arabic Naskh", "Segoe UI", Tahoma, sans-serif;
+  color:#0a5c40; color:var(--acc);
+  margin:0 0.28em;
+  white-space:nowrap;
+}
+.sajdahBadge{
+  display:inline-block;
+  font-family:"Noto Sans Arabic", "Droid Arabic Kufi", "Segoe UI", Tahoma, sans-serif;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.4;
+  padding:2px 10px;
+  margin:0 6px;
+  border-radius:999px;
+  background:#fff5d1; background:var(--gold-bg);
+  border:1px solid #b88b14; border:1px solid var(--gold-bd);
+  color:#523b00; color:var(--gold-ink);
+  vertical-align:middle;
+}
+.verse.cur{
+  background:#fde99a; background:var(--hl);
+}
+.quran.mode-verse .verse.cur{
+  background:#fde99a; background:var(--hl);
+  border-color:#b88b14; border-color:var(--gold-bd);
+}
+.verse.flash{
+  -webkit-animation:ayahFlash 1.5s ease-out;
+  animation:ayahFlash 1.5s ease-out;
+}
+@-webkit-keyframes ayahFlash{
+  0%{background:#fde99a}
+  100%{background:transparent}
+}
+@keyframes ayahFlash{
+  0%{background:#fde99a; background:var(--hl)}
+  100%{background:transparent}
+}
+
+/* Font size levels (works on Chromium 37+ without CSS variables or calc) */
+.fs-0 .quran{font-size:24px}
+.fs-0 .bsml{font-size:21px}
+.fs-0 .verse .enum{font-size:17px}
+
+.fs-1 .quran{font-size:28px}
+.fs-1 .bsml{font-size:24px}
+.fs-1 .verse .enum{font-size:19px}
+
+.fs-2 .quran{font-size:32px}
+.fs-2 .bsml{font-size:27px}
+.fs-2 .verse .enum{font-size:21px}
+
+.fs-3 .quran{font-size:38px}
+.fs-3 .bsml{font-size:31px}
+.fs-3 .verse .enum{font-size:24px}
+
+.fs-4 .quran{font-size:44px}
+.fs-4 .bsml{font-size:36px}
+.fs-4 .verse .enum{font-size:27px}
+
+.fs-5 .quran{font-size:52px}
+.fs-5 .bsml{font-size:41px}
+.fs-5 .verse .enum{font-size:31px}
+
+/* Page & Surah End Navigation */
+.pageNav{
+  margin:24px 0 14px;
+  padding-top:16px;
+  border-top:2px solid #d6cbb6; border-top:2px solid var(--line);
+}
+.pageStatusFoot{
+  text-align:center;
+  margin:0 0 12px;
+  font-size:17px;
+  font-weight:700;
+  color:#4d4033; color:var(--soft);
+}
+.pageBtns{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  margin:0 -5px;
+}
+.pageBtn{
+  -webkit-flex:1 1 45%;
+  flex:1 1 45%;
+  min-height:58px;
+  margin:5px;
+  padding:12px 14px;
+  border-radius:16px;
+  font-size:19px;
+  font-weight:700;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+}
+.nextPage{
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  border:2px solid #074530; border:2px solid var(--acc-press);
+}
+.prevPage{
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  border:2px solid #0a5c40; border:2px solid var(--acc);
+}
+
+.navEnd{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  margin:18px -5px 8px;
+}
+.navEnd button{
+  -webkit-flex:1 1 100%;
+  flex:1 1 100%;
+  min-height:56px;
+  margin:5px;
+  padding:12px 16px;
+  border-radius:16px;
+  font-size:18px;
+  font-weight:700;
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  border:2px solid #0a5c40; border:2px solid var(--acc);
+}
+@media (min-width:540px){
+  .navEnd button{-webkit-flex:1 1 30%; flex:1 1 30%}
+}
+.navEnd .nextS{
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+}
+.navEnd .toList{
+  background:#fffdf8; background:var(--card);
+  color:#1f1710; color:var(--ink);
+}
+
+/* ===== Fixed Reader Bottom Bar ===== */
+.readerFootBar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:30;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  background:#fffdf8; background:var(--card);
+  border-top:2px solid #d6cbb6; border-top:2px solid var(--line);
+  padding:6px 8px;
+  box-shadow:0 -2px 10px rgba(31,23,16,0.08);
+}
+.footBtn{
+  min-height:52px;
+  margin:0 3px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  background:#efe7d6; background:var(--card-alt);
+  color:#1f1710; color:var(--ink);
+  font-size:17px;
+  font-weight:700;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+.footSizeBtn{
+  min-width:52px;
+  font-size:21px;
+}
+.footBtn:disabled{opacity:0.45}
+.footThemeBtn, .footSettingsBtn{
+  -webkit-flex:1;
+  flex:1;
+  min-width:0;
+}
+.footBtn .ico{margin-left:5px; width:20px; height:20px}
+.footBtn:active{
+  background:#dfeee7; background:var(--acc-soft);
+  border-color:#0a5c40; border-color:var(--acc);
+}
+
+@media (max-width: 360px){
+  .tabBtn{font-size:16px; padding:10px 4px}
+  .readerBackBtn, .readerFavBtn{padding:8px 9px; font-size:15px}
+  .readerTitle{font-size:23px; margin:0 5px}
+  .footBtn{padding:6px 6px; font-size:15px; margin:0 2px}
+  .footSizeBtn{min-width:48px; font-size:19px}
+  .footBtn .ico{width:17px; height:17px; margin-left:3px}
+}
+
+/* ===== Settings Modal ===== */
+.modalOverlay{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  z-index:50;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+  padding:14px;
+}
+.modalBackdrop{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  background:rgba(0,0,0,0.58);
+}
+.modalCard{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow-y:auto;
+  background:#fffdf8; background:var(--card);
+  color:#1f1710; color:var(--ink);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 12px 34px rgba(0,0,0,0.28);
+}
+.modalHead{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:space-between;
+  justify-content:space-between;
+  padding:14px 16px;
+  border-bottom:2px solid #d6cbb6; border-bottom:2px solid var(--line);
+}
+.modalTitle{
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+  color:#063b29; color:var(--acc-ink);
+}
+.modalCloseBtn{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  min-height:46px;
+  padding:6px 14px;
+  border-radius:12px;
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  background:#efe7d6; background:var(--card-alt);
+  color:#1f1710; color:var(--ink);
+  font-size:16px;
+  font-weight:700;
+}
+.modalCloseBtn .ico{margin-left:5px; width:18px; height:18px}
+.modalBody{padding:14px 16px 18px}
+.settingGroup{margin-bottom:18px}
+.settingLabel{
+  margin:0 0 8px;
+  font-size:17px;
+  font-weight:700;
+  color:#1f1710; color:var(--ink);
+}
+.choiceRow{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-wrap:wrap;
+  flex-wrap:wrap;
+  margin:0 -4px;
+}
+.choiceBtn{
+  -webkit-flex:1 1 30%;
+  flex:1 1 30%;
+  min-height:50px;
+  margin:4px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+  background:#fffdf8; background:var(--card);
+  color:#1f1710; color:var(--ink);
+  font-size:16px;
+  font-weight:700;
+}
+.choiceBtn.is-active{
+  background:#0a5c40; background:var(--acc);
+  border-color:#074530; border-color:var(--acc-press);
+  color:#ffffff;
+}
+
+.settingUpdates{
+  margin-bottom:0;
+  padding-top:14px;
+  border-top:2px solid #d6cbb6; border-top:2px solid var(--line);
+}
+.verRow{
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:space-between;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.verBadge{
+  padding:4px 12px;
+  border-radius:999px;
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  font-size:15px;
+  font-weight:700;
+}
+.updateBtn{
+  width:100%;
+  min-height:52px;
+  padding:10px 16px;
+  border-radius:14px;
+  border:2px solid #0a5c40; border:2px solid var(--acc);
+  background:#dfeee7; background:var(--acc-soft);
+  color:#063b29; color:var(--acc-ink);
+  font-size:17px;
+  font-weight:700;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-align-items:center;
+  align-items:center;
+  -webkit-justify-content:center;
+  justify-content:center;
+}
+.updateBtn .ico{margin-left:8px}
+.updateStatus{
+  margin-top:10px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#efe7d6; background:var(--card-alt);
+  border:2px solid #d6cbb6; border:2px solid var(--line);
+}
+.updateMsg{
+  margin:0;
+  font-size:16px;
+  font-weight:700;
+  color:#1f1710; color:var(--ink);
+}
+.downloadBtn{
+  margin-top:10px;
+  width:100%;
+  min-height:48px;
+  padding:8px 14px;
+  border:0;
+  border-radius:12px;
+  background:#0a5c40; background:var(--acc);
+  color:#ffffff;
+  font-size:17px;
+  font-weight:700;
+}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed;
+  bottom:76px;
+  left:16px;
+  right:16px;
+  max-width:460px;
+  margin:0 auto;
+  z-index:60;
+  padding:12px 16px;
+  border-radius:14px;
+  background:#063b29; background:var(--acc-ink);
+  color:#ffffff;
+  font-size:17px;
+  font-weight:700;
+  text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,0.28);
+}
+
+/* ===== Explicit Literal Theme Overrides for Old WebViews (Chromium 37-48 without CSS vars) ===== */
+html[data-theme="night"] body{background:#121815; color:#eef4f0}
+html[data-theme="night"] .homeTop,
+html[data-theme="night"] .tabbar,
+html[data-theme="night"] .readerTop,
+html[data-theme="night"] .readerFootBar,
+html[data-theme="night"] .modalCard,
+html[data-theme="night"] .favCard,
+html[data-theme="night"] .savedItem,
+html[data-theme="night"] .rangePill,
+html[data-theme="night"] .srow,
+html[data-theme="night"] .juzCard,
+html[data-theme="night"] .quran.mode-verse .verse,
+html[data-theme="night"] .choiceBtn,
+html[data-theme="night"] .readerStatus,
+html[data-theme="night"] .hintCard{
+  background:#1a231e; color:#eef4f0; border-color:#2f4037;
+}
+html[data-theme="night"] .homeTitle,
+html[data-theme="night"] .secTitle,
+html[data-theme="night"] .readerTitle,
+html[data-theme="night"] .modalTitle{color:#9be8c8}
+html[data-theme="night"] .homeSub,
+html[data-theme="night"] .favCardMeta,
+html[data-theme="night"] .smeta,
+html[data-theme="night"] .juzSub,
+html[data-theme="night"] .readerMeta,
+html[data-theme="night"] .pageStatusFoot,
+html[data-theme="night"] .homeFooter,
+html[data-theme="night"] .rangePill .rangeSub,
+html[data-theme="night"] .tabBtn{color:#bfd0c6}
+html[data-theme="night"] .favCardName,
+html[data-theme="night"] .sname,
+html[data-theme="night"] .juzTitle,
+html[data-theme="night"] .savedOpenBtn,
+html[data-theme="night"] .settingLabel,
+html[data-theme="night"] .updateMsg{color:#eef4f0}
+html[data-theme="night"] .iconLabelBtn,
+html[data-theme="night"] .footBtn,
+html[data-theme="night"] .modalCloseBtn,
+html[data-theme="night"] .savedRemoveBtn,
+html[data-theme="night"] .pageInfoPill,
+html[data-theme="night"] .updateStatus{
+  background:#222e27; color:#eef4f0; border-color:#2f4037;
+}
+html[data-theme="night"] .continueCard,
+html[data-theme="night"] .snum,
+html[data-theme="night"] .readerBackBtn,
+html[data-theme="night"] .nextPage,
+html[data-theme="night"] .navEnd .nextS,
+html[data-theme="night"] .choiceBtn.is-active,
+html[data-theme="night"] .downloadBtn,
+html[data-theme="night"] .jumpBanner button{
+  background:#116345; color:#ffffff; border-color:#0d4f37;
+}
+html[data-theme="night"] .tabBtn.is-active,
+html[data-theme="night"] .favCardProg,
+html[data-theme="night"] .sprog,
+html[data-theme="night"] .juzNum,
+html[data-theme="night"] .prevPage,
+html[data-theme="night"] .navEnd button,
+html[data-theme="night"] .verBadge,
+html[data-theme="night"] .updateBtn,
+html[data-theme="night"] .rangePill.is-active{
+  background:#1f352b; color:#9be8c8; border-color:#2f6f54;
+}
+html[data-theme="night"] .navEnd .nextS{background:#116345; color:#ffffff}
+html[data-theme="night"] .navEnd .toList{background:#1a231e; color:#eef4f0; border-color:#2f4037}
+html[data-theme="night"] .bsml{color:#9be8c8}
+html[data-theme="night"] .verse .enum{color:#6be0b2}
+html[data-theme="night"] .verse.cur{background:#4a3b10; color:#fff4c4}
+html[data-theme="night"] .specialCard,
+html[data-theme="night"] .jumpBanner,
+html[data-theme="night"] .sajdahBadge,
+html[data-theme="night"] .juzBadge,
+html[data-theme="night"] .readerFavBtn,
+html[data-theme="night"] .savedConfirm{
+  background:#2a2414; color:#fde494; border-color:#c89f32;
+}
+html[data-theme="night"] .readerFavBtn.on{background:#c89f32; color:#121815}
+html[data-theme="night"] .toast{background:#9be8c8; color:#121815}
+html[data-theme="night"] .favCard:active,
+html[data-theme="night"] .srow:active,
+html[data-theme="night"] .juzCard:active,
+html[data-theme="night"] .iconLabelBtn:active,
+html[data-theme="night"] .footBtn:active,
+html[data-theme="night"] .savedOpenBtn:active,
+html[data-theme="night"] .savedRemoveBtn:active{
+  background:#1f352b; border-color:#6be0b2;
+}
+html[data-theme="night"] .continueCard:active{background:#0d4f37}
+
+html[data-theme="contrast"] body{background:#000000; color:#ffffff}
+html[data-theme="contrast"] .homeTop,
+html[data-theme="contrast"] .tabbar,
+html[data-theme="contrast"] .readerTop,
+html[data-theme="contrast"] .readerFootBar,
+html[data-theme="contrast"] .modalCard,
+html[data-theme="contrast"] .favCard,
+html[data-theme="contrast"] .savedItem,
+html[data-theme="contrast"] .rangePill,
+html[data-theme="contrast"] .srow,
+html[data-theme="contrast"] .juzCard,
+html[data-theme="contrast"] .quran.mode-verse .verse,
+html[data-theme="contrast"] .choiceBtn,
+html[data-theme="contrast"] .readerStatus,
+html[data-theme="contrast"] .hintCard{
+  background:#0d0d0d; color:#ffffff; border-color:#ffffff;
+}
+html[data-theme="contrast"] .homeTitle,
+html[data-theme="contrast"] .secTitle,
+html[data-theme="contrast"] .readerTitle,
+html[data-theme="contrast"] .modalTitle,
+html[data-theme="contrast"] .bsml{color:#ffe14d}
+html[data-theme="contrast"] .homeSub,
+html[data-theme="contrast"] .favCardMeta,
+html[data-theme="contrast"] .smeta,
+html[data-theme="contrast"] .juzSub,
+html[data-theme="contrast"] .readerMeta,
+html[data-theme="contrast"] .pageStatusFoot,
+html[data-theme="contrast"] .homeFooter,
+html[data-theme="contrast"] .rangePill .rangeSub,
+html[data-theme="contrast"] .tabBtn{color:#e6e6e6}
+html[data-theme="contrast"] .favCardName,
+html[data-theme="contrast"] .sname,
+html[data-theme="contrast"] .juzTitle,
+html[data-theme="contrast"] .savedOpenBtn,
+html[data-theme="contrast"] .settingLabel,
+html[data-theme="contrast"] .updateMsg{color:#ffffff}
+html[data-theme="contrast"] .iconLabelBtn,
+html[data-theme="contrast"] .footBtn,
+html[data-theme="contrast"] .modalCloseBtn,
+html[data-theme="contrast"] .savedRemoveBtn,
+html[data-theme="contrast"] .pageInfoPill,
+html[data-theme="contrast"] .updateStatus{
+  background:#1a1a1a; color:#ffffff; border-color:#ffffff;
+}
+html[data-theme="contrast"] .continueCard,
+html[data-theme="contrast"] .snum,
+html[data-theme="contrast"] .readerBackBtn,
+html[data-theme="contrast"] .nextPage,
+html[data-theme="contrast"] .navEnd .nextS,
+html[data-theme="contrast"] .choiceBtn.is-active,
+html[data-theme="contrast"] .downloadBtn,
+html[data-theme="contrast"] .jumpBanner button{
+  background:#005a3b; color:#ffffff; border-color:#ffffff;
+}
+html[data-theme="contrast"] .tabBtn.is-active,
+html[data-theme="contrast"] .favCardProg,
+html[data-theme="contrast"] .sprog,
+html[data-theme="contrast"] .juzNum,
+html[data-theme="contrast"] .prevPage,
+html[data-theme="contrast"] .navEnd button,
+html[data-theme="contrast"] .verBadge,
+html[data-theme="contrast"] .updateBtn,
+html[data-theme="contrast"] .rangePill.is-active{
+  background:#1a1a1a; color:#ffe14d; border-color:#ffe14d;
+}
+html[data-theme="contrast"] .navEnd .nextS{background:#005a3b; color:#ffffff; border-color:#ffffff}
+html[data-theme="contrast"] .navEnd .toList{background:#0d0d0d; color:#ffffff; border-color:#ffffff}
+html[data-theme="contrast"] .verse .enum{color:#ffe14d}
+html[data-theme="contrast"] .verse.cur{background:#ffe14d; color:#000000}
+html[data-theme="contrast"] .verse.cur .enum{color:#000000}
+html[data-theme="contrast"] .specialCard,
+html[data-theme="contrast"] .jumpBanner,
+html[data-theme="contrast"] .sajdahBadge,
+html[data-theme="contrast"] .juzBadge,
+html[data-theme="contrast"] .readerFavBtn,
+html[data-theme="contrast"] .savedConfirm{
+  background:#1a1600; color:#ffe14d; border-color:#ffe14d;
+}
+html[data-theme="contrast"] .readerFavBtn.on{background:#ffe14d; color:#000000}
+html[data-theme="contrast"] .toast{background:#ffe14d; color:#000000}
+html[data-theme="contrast"] .favCard:active,
+html[data-theme="contrast"] .srow:active,
+html[data-theme="contrast"] .juzCard:active,
+html[data-theme="contrast"] .iconLabelBtn:active,
+html[data-theme="contrast"] .footBtn:active,
+html[data-theme="contrast"] .savedOpenBtn:active,
+html[data-theme="contrast"] .savedRemoveBtn:active{
+  background:#262626; border-color:#ffe14d;
+}
+html[data-theme="contrast"] .continueCard:active{background:#003d28}
